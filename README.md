@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance App
+
+A comprehensive personal finance management application built as a solution to the [Frontend Mentor Personal Finance App Challenge](https://www.frontendmentor.io/challenges/personal-finance-app-JfjtZgyMt1).
+
+## Overview
+
+This project is a modern, responsive personal finance application that allows users to manage their financial data, track transactions, create budgets, manage savings pots, and monitor recurring bills. The application provides a complete dashboard experience with intuitive navigation and comprehensive financial insights.
+
+## Features
+
+Users can:
+
+- **Overview Dashboard**: See all personal finance data at-a-glance on the overview page
+- **Transaction Management**: View all transactions with pagination (10 transactions per page)
+- **Search & Filter**: Search, sort, and filter transactions by various criteria
+- **Budget Management**: Create, read, update, and delete (CRUD) budgets and saving pots
+- **Category Insights**: View the latest three transactions for each budget category
+- **Savings Progress**: Track progress towards each savings pot goal
+- **Pot Management**: Add money to and withdraw money from savings pots
+- **Recurring Bills**: View recurring bills and their status for the current month
+- **Bill Management**: Search and sort recurring bills
+- **Form Validation**: Receive validation messages for incomplete required form fields
+- **Accessibility**: Navigate the entire app using only keyboard controls
+- **Responsive Design**: Optimal layout across all device screen sizes
+- **Interactive States**: Hover and focus states for all interactive elements
+
+### Bonus Features
+
+- Save details to a database (full-stack implementation)
+- User authentication system with account creation and login
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) - React framework for production
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- **Charts**: [Recharts](https://recharts.org/) - Composable charting library for React
+- **Package Manager**: [Bun](https://bun.sh/) - Fast all-in-one JavaScript runtime
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Make sure you have [Bun](https://bun.sh/) installed on your machine.
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/tryea/frontend-mentor-personal-finance-app.git
+cd frontend-mentor-personal-finance-app
+```
+
+1. Install dependencies:
+
+```bash
+bun install
+```
+
+1. Run the development server:
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses the provided `data.json` file to populate initial content, including:
 
-## Learn More
+- Account balance and financial overview
+- Transaction history with categories
+- Budget configurations
+- Savings pots with targets and current amounts
+- Recurring bill information
 
-To learn more about Next.js, take a look at the following resources:
+## Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+You can start editing the application by modifying files in the `src/app` directory. The page auto-updates as you edit the files.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Author
+
+Ersapta Aristo
+
+- LinkedIn: [https://www.linkedin.com/in/ersapta-aristo/](https://www.linkedin.com/in/ersapta-aristo/)
+- GitHub: [https://github.com/tryea](https://github.com/tryea)
+
+## Acknowledgments
+
+- [Frontend Mentor](https://www.frontendmentor.io/) for providing the challenge and design specifications
+- Challenge URL: [Personal Finance App Challenge](https://www.frontendmentor.io/challenges/personal-finance-app-JfjtZgyMt1)
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
