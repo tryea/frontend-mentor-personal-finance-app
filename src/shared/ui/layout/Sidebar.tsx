@@ -23,13 +23,15 @@ function NavigationItem({ item, isMinimized }: NavigationItemProps) {
   return (
     <li>
       <button
-        className={`w-full flex flex-row gap-4 items-start px-8 py-4 text-left transition-colors duration-200 hover:bg-gray-700 relative ${
-          active ? "bg-(--ds-beige-100) text-(--ds-grey-900) rounded-r-xl" : ""
+        className={`w-full flex flex-row gap-4 items-start px-8 py-4 text-left transition-colors duration-200 relative text-(--ds-grey-300) hover:text-(--ds-grey-100) cursor-pointer  ${
+          active
+            ? "bg-(--ds-beige-100) hover:bg-(--ds-beige-500) text-(--ds-grey-900) hover:text-(--ds-grey-900) rounded-r-xl"
+            : ""
         }`}
       >
         <div
           className={`w-5 h-5 transition-all duration-200 ${
-            active ? "text-[#277c78]" : "text-white"
+            active ? "text-[#277c78]" : ""
           }`}
         >
           <Icon className="" />
@@ -90,7 +92,7 @@ export default function Sidebar() {
       {/* Minimize Toggle */}
       <button
         onClick={toggleMinimize}
-        className={`w-full flex items-center px-8 py-4 text-left transition-colors duration-200 hover:bg-gray-700 rounded`}
+        className={`w-full flex items-center px-8 py-4 text-left transition-colors duration-200 hover:bg-gray-700 rounded cursor-pointer`}
       >
         <Image
           src="/icons/icon-minimize-menu.svg"
