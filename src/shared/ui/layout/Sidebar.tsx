@@ -29,15 +29,11 @@ function NavigationItem({ item, isMinimized }: NavigationItemProps) {
             : ""
         }`}
       >
-        <div
-          className={`w-5 h-5 transition-all duration-200 ${
-            active ? "text-[#277c78]" : ""
-          }`}
-        >
+        <div className={`w-5 h-5 ${active ? "text-[#277c78]" : ""}`}>
           <Icon className="" />
         </div>
         <span
-          className={`text-preset-3 transition-opacity duration-300 ${
+          className={`text-preset-3 transition-opacity duration-200 ${
             isMinimized ? "opacity-0 hidden" : "opacity-100"
           }`}
         >
@@ -72,7 +68,7 @@ export default function Sidebar() {
           alt="Finance App Logo"
           width={isMinimized ? 12.48 : 121.45}
           height={isMinimized ? 21.44 : 21.76}
-          className="transition-all duration-300"
+          className=""
         />
       </div>
 
@@ -101,10 +97,10 @@ export default function Sidebar() {
           height={20}
           className={`mr-4 filter brightness-0 invert ${
             isMinimized ? "rotate-180" : ""
-          }`}
+          } transition-transform duration-200`}
         />
         <span
-          className={`transition-opacity duration-300 ${
+          className={`transition-opacity duration-200 ${
             isMinimized ? "opacity-0 hidden" : "opacity-100"
           }`}
         >

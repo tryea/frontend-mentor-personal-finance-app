@@ -6,20 +6,23 @@ import {
   SidebarProvider,
   useSidebar,
 } from "@/src/shared/contexts/SidebarContext";
+import BottomNav from "@/src/shared/ui/layout/BottomNav";
 
 function DashboardContent({ children }: { children: React.ReactNode }) {
   const { isMinimized } = useSidebar();
 
   return (
     <div
-      className={`min-h-dvh grid ${
-        isMinimized ? "md:grid-cols-[80px_1fr]" : "md:grid-cols-[300px_1fr]"
-      }`}
+      className={`min-h-dvh grid transition-[grid-template-columns] duration-200 ease-out`}
+      style={{
+        gridTemplateColumns: isMinimized ? "80px 1fr" : "300px 1fr",
+      }}
     >
-      <aside className="w-full">
+      <aside className="w-full hidden md:block">
         <Sidebar />
       </aside>
-      <main className="p-6">{children}</main>
+      <main className="p-6 pb-20 md:pb-6">{children}</main>
+      <BottomNav />
     </div>
   );
 }
