@@ -5,10 +5,12 @@ import { DataTable } from "./DataTable";
 import { FilterAndSearchTable } from "./FilterAndSearchTable";
 import { PaginationTable } from "./PaginationTable";
 import data from "../../../../../data.json";
+import { useSidebar } from "@/src/shared/contexts/SidebarContext";
 
 export const TransactionTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(1);
+  const { isMinimized } = useSidebar();
 
   useEffect(() => {
     const calculatePageSize = () => {
@@ -17,8 +19,8 @@ export const TransactionTable = () => {
       const filterSearchHeight = 70;
       const paginationHeight = 60;
       const pageHeaderHeight = 100;
-      const navBarHeight = 80;
-      const verticalPadding = 40;
+      const navBarHeight = window.innerWidth > 768 ? 0 : 100;
+      const verticalPadding = window.innerWidth > 768 ? 64 : 56;
 
       const availableHeight =
         window.innerHeight -
@@ -30,7 +32,7 @@ export const TransactionTable = () => {
         verticalPadding;
       const idealPageSize = Math.floor(availableHeight / rowHeight);
 
-      setPageSize(idealPageSize);
+      setPageSize(idealPageSize - 1);
     };
 
     calculatePageSize();
