@@ -7,29 +7,29 @@ import {
 
 export const FilterAndSearchTable = () => {
   return (
-    <div className="flex flex-row items-center justify-between gap-6">
+    <div className="flex flex-row items-center justify-between gap-6 max-w-full min-w-0">
       {/* Search Box */}
-      <div className="flex flex-row items-center justify-start gap-4 border border-beige-500 rounded-lg pr-5 lg:justify-between ">
+      <div className="flex flex-row flex-1 min-w-0 max-w-[320px] shrink grow items-center justify-start gap-4 border border-beige-500 rounded-lg pr-5 lg:justify-between ">
         <input
           type="text"
           placeholder="Search transaction"
-          className="flex flex-1 pl-5 pr-0 py-3 placeholder:text-beige-500 text-grey-900 outline-0 text-ellipsis"
+          className="flex flex-1 min-w-0 pl-5 pr-0 py-3 placeholder:text-beige-500 text-grey-900 outline-0 text-ellipsis"
         />
         <IconSearch className="w-4 h-4" />
       </div>
 
       {/* Mobile filter/sort icons */}
-      <div className="flex flex-1 items-center gap-6 md:hidden">
-        <button className="flex flex-1">
+      <div className="flex items-center gap-6 md:hidden">
+        <button>
           <IconSortMobile className="w-5 h-5" />
         </button>
-        <button className="flex flex-1">
+        <button>
           <IconFilterMobile className="w-5 h-5" />
         </button>
       </div>
 
       {/* Desktop sort/category dropdowns */}
-      <div className="hidden items-center gap-4 md:flex md:flex-1">
+      <div className="hidden items-center gap-4 md:flex flex-none w-[438px] shrink-0">
         {/* Sort By */}
         <div className="flex flex-1 flex-nowrap items-center gap-2">
           <span className="text-preset-4 text-grey-900 text-nowrap">
