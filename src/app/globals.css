@@ -90,23 +90,23 @@ body {
 }
 
 @utility dashboard-layout {
-  @apply min-h-dvh max-h-dvh grid transition-[grid-template-columns] duration-500 ease-out;
+  @apply min-h-dvh max-h-dvh grid transition-[grid-template-rows] lg:transition-[grid-template-columns] duration-500 ease-out grid-rows-[1fr_52px] md:grid-rows-[1fr_74px] lg:grid-rows-none;
 
   &[data-minimized="true"] {
-    @apply grid-cols-[88px_1fr];
+    @apply lg:grid-cols-[88px_1fr];
   }
 
   &[data-minimized="false"] {
-    @apply grid-cols-[300px_1fr];
+    @apply lg:grid-cols-[300px_1fr];
   }
 }
 
 @utility dashboard-content {
-  @apply w-full h-full;
+  @apply w-full h-full max-h-full overflow-y-scroll;
 }
 
 @utility sidebar {
-  @apply flex flex-col gap-6 pb-6 rounded-r-2xl w-full h-full bg-grey-900;
+  @apply hidden lg:flex flex-col gap-6 pb-6 rounded-r-2xl w-full h-full bg-grey-900;
 }
 
 @utility sidebar-header {
@@ -173,5 +173,37 @@ body {
 
   &[data-minimized="true"] span {
     @apply max-w-0;
+  }
+}
+
+@utility bottom-nav {
+  @apply w-full h-full px-4 py-2 md:px-10 bg-grey-900 lg:hidden;
+}
+
+@utility bottom-nav-menu-item {
+  @apply relative w-full h-full flex flex-col justify-start items-center gap-1 pt-2 pb-3 px-0 text-grey-300 text-preset-5-bold;
+
+  & div:nth-of-type(1) {
+    @apply w-6 h-6;
+  }
+
+  & svg {
+    @apply w-6 h-6;
+  }
+
+  &[data-active="true"] svg {
+    @apply text-green-500;
+  }
+
+  & span {
+    @apply hidden md:block md:text-preset-5-bold;
+  }
+
+  &[data-active="true"] span {
+    @apply text-grey-900;
+  }
+
+  &[data-active="true"] {
+    @apply bg-beige-100 rounded-t-xl;
   }
 }

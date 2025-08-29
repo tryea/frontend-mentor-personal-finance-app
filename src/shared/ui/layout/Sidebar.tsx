@@ -7,6 +7,7 @@ import { NAVIGATION_MENU_ITEMS } from "../../constants/navigation";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import { IconMinimizeMenu } from "../icons";
+import Link from "next/link";
 
 interface NavigationItemProps {
   item: MenuItem;
@@ -20,7 +21,7 @@ function NavigationItem({ item, isMinimized }: NavigationItemProps) {
 
   return (
     <li>
-      <button
+      <div
         className="sidebar-menu-item"
         data-active={active}
         data-minimized={isMinimized}
@@ -31,10 +32,10 @@ function NavigationItem({ item, isMinimized }: NavigationItemProps) {
 
         <span>{item.label}</span>
 
-        {item.active && (
+        {!!active && (
           <div className="h-full absolute left-0 top-0 w-1 bg-green-500" />
         )}
-      </button>
+      </div>
     </li>
   );
 }
@@ -57,13 +58,23 @@ export default function Sidebar() {
       {/* Navigation Menu */}
       <nav className="flex-1">
         <ul className="sidebar-menu-list">
-          {NAVIGATION_MENU_ITEMS.map((item: MenuItem) => (
-            <NavigationItem
-              key={item.id}
-              item={item}
-              isMinimized={isMinimized}
-            />
-          ))}
+          {NAVIGATION_MENU_ITEMS.map((item: MenuItem) => {
+            if (item.href) {
+              return (
+                <Link key={item.id} href={item.href} className="w-full h-full">
+                  <NavigationItem item={item} isMinimized={isMinimized} />
+                </Link>
+              );
+            }
+
+            return (
+              <NavigationItem
+                key={item.id}
+                item={item}
+                isMinimized={isMinimized}
+              />
+            );
+          })}
         </ul>
       </nav>
 

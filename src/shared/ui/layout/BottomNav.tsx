@@ -6,35 +6,46 @@ import { usePathname } from "next/navigation";
 import { NAVIGATION_MENU_ITEMS } from "@/src/shared/constants/navigation";
 import type { MenuItem } from "@/src/shared/types/navigation";
 
-export default function BottomNav() {
+interface BottomNavItemProps {
+  item: MenuItem;
+}
+
+function BottomNavItem({ item }: BottomNavItemProps) {
+  const Icon = item.icon;
   const pathname = usePathname();
+  const active = item.href ? pathname === item.href : false;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[var(--ds-sidebar-bg)] text-white border-t border-[color-mix(in_srgb,var(--ds-sidebar-bg),white_10%)]">
-      <ul className="grid grid-cols-5">
+    <li>
+      <div className="bottom-nav-menu-item" data-active={active}>
+        <div>
+          <Icon />
+        </div>
+
+        <span>{item.label}</span>
+
+        {!!active && (
+          <div className="h-1 absolute left-0 bottom-0 w-full bg-green-500" />
+        )}
+      </div>
+    </li>
+  );
+}
+
+export default function BottomNav() {
+  return (
+    <nav className="bottom-nav">
+      <ul className="grid grid-cols-5 gap-0 md:gap-[42px]">
         {NAVIGATION_MENU_ITEMS.map((item: MenuItem) => {
-          const active = item.href ? pathname === item.href : false;
-          return (
-            <li key={item.id}>
-              {item.href ? (
-                <Link
-                  href={item.href}
-                  className={`flex flex-col items-center justify-center py-3 gap-1 text-xs ${
-                    active ? "text-[#277c78]" : "text-(--ds-grey-300)"
-                  }`}
-                >
-                  <span className={`w-5 h-5 ${active ? "text-[#277c78]" : ""}`}>
-                    <item.icon />
-                  </span>
-                  <span className="sr-only sm:not-sr-only sm:text-[11px]">
-                    {item.label}
-                  </span>
-                </Link>
-              ) : (
-                <div className="py-3" />
-              )}
-            </li>
-          );
+          if (item.href) {
+            return (
+              <Link key={item.id} href={item.href} className="w-full h-full">
+                <BottomNavItem item={item} />
+              </Link>
+            );
+          }
+
+          return <BottomNavItem key={item.id} item={item} />;
         })}
       </ul>
     </nav>
