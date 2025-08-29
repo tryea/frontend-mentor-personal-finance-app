@@ -10,12 +10,12 @@ export const LayoutHeader = ({
   onActionClick,
 }: LayoutHeaderProps) => {
   return (
-    <div className="flex items-center justify-between">
-      <h1 className="text-preset-1 font-bold">{title}</h1>
+    <div className="flex flex-row items-center justify-between">
+      <h1 className="text-preset-1 text-grey-900">{title}</h1>
       {onActionClick && (
         <button
           onClick={onActionClick}
-          className="text-preset-4-bold rounded-full bg-primary-500 px-6 py-3 text-white"
+          className="bg-grey-900 text-white flex flex-row p-4 gap-4 justify-center items-center rounded-lg text-preset-4-bold"
         >
           {actionName}
         </button>
