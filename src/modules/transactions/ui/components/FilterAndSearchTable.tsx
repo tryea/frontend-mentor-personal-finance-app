@@ -32,24 +32,26 @@ export const FilterAndSearchTable = () => {
       <div className="hidden items-center gap-4 md:flex md:flex-1">
         {/* Sort By */}
         <div className="flex flex-1 flex-nowrap items-center gap-2">
-          <span className="text-preset-4 text-gray-400">Sort by</span>
+          <span className="text-preset-4 text-grey-900 text-nowrap">
+            Sort by
+          </span>
           <div className="relative">
-            <select className="text-preset-4 appearance-none rounded-lg border border-gray-200 bg-white py-3 pl-4 pr-10">
+            <select className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13">
               <option>Latest</option>
               <option>Oldest</option>
             </select>
             <IconCaretDown
               width={16}
               height={16}
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+              className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
             />
           </div>
         </div>
         {/* Category */}
         <div className="flex flex-1 items-center gap-2">
-          <span className="text-preset-4 text-gray-400">Category</span>
+          <span className="text-preset-4 text-grey-900">Category</span>
           <div className="relative">
-            <select className="text-preset-4 appearance-none rounded-lg border border-gray-200 bg-white py-3 pl-4 pr-10">
+            <select className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13">
               <option>All Transactions</option>
               <option>Groceries</option>
               <option>Transport</option>
@@ -58,7 +60,7 @@ export const FilterAndSearchTable = () => {
             <IconCaretDown
               width={16}
               height={16}
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+              className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
             />
           </div>
         </div>
