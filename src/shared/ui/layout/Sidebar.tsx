@@ -53,16 +53,14 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`pb-6 gap-6 bg-[var(--ds-sidebar-bg)] text-white transition-all ${
-        SIDEBAR_CONFIG.transitionDuration
-      } flex flex-col h-full ${
+      className={`sidebar ${SIDEBAR_CONFIG.transitionDuration} ${
         isMinimized
           ? SIDEBAR_CONFIG.minimizedWidth
           : SIDEBAR_CONFIG.expandedWidth
       }`}
     >
       {/* Logo */}
-      <div className="flex items-center py-10 px-8">
+      <div className="sidebar-logo">
         <Image
           src={isMinimized ? "/logo/logo-small.svg" : "/logo/logo-large.svg"}
           alt="Finance App Logo"
@@ -86,10 +84,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Minimize Toggle */}
-      <button
-        onClick={toggleMinimize}
-        className={`w-full flex items-center px-8 py-4 text-left transition-colors duration-200 hover:bg-gray-700 rounded cursor-pointer`}
-      >
+      <button onClick={toggleMinimize} className={`sidebar-expand-toggle`}>
         <Image
           src="/icons/icon-minimize-menu.svg"
           alt="Minimize menu icon"

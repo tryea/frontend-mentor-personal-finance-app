@@ -13,15 +13,15 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={`min-h-dvh grid transition-[grid-template-columns] duration-200 ease-out`}
+      className={`min-h-dvh max-h-dvh grid transition-[grid-template-columns] duration-200 ease-out overflow-hidden`}
       style={{
         gridTemplateColumns: isMinimized ? "80px 1fr" : "300px 1fr",
       }}
     >
-      <aside className="w-full hidden md:block">
+      <aside className="h-full w-full hidden lg:block">
         <Sidebar />
       </aside>
-      <main className="p-6 pb-20 md:pb-6">{children}</main>
+      <main className="dashboard-content">{children}</main>
       <BottomNav />
     </div>
   );

@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${publicSans.variable} font-sans antialiased`}
+        className={`${publicSans.variable} font-sans antialiased bg-beige-100`}
         cz-shortcut-listen="true"
       >
         {children}
