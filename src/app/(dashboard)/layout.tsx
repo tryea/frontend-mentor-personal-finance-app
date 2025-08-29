@@ -12,15 +12,8 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   const { isMinimized } = useSidebar();
 
   return (
-    <div
-      className={`min-h-dvh max-h-dvh grid transition-[grid-template-columns] duration-200 ease-out overflow-hidden`}
-      style={{
-        gridTemplateColumns: isMinimized ? "80px 1fr" : "300px 1fr",
-      }}
-    >
-      <aside className="h-full w-full hidden lg:block">
-        <Sidebar />
-      </aside>
+    <div className="dashboard-layout" data-minimized={isMinimized}>
+      <Sidebar />
       <main className="dashboard-content">{children}</main>
       <BottomNav />
     </div>

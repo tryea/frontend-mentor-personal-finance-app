@@ -89,18 +89,89 @@ body {
   @apply px-5 py-3 gap-4 flex flex-row items-start justify-center;
 }
 
-@utility sidebar {
-  @apply bg-grey-900 pb-6 gap-6 text-white transition-all flex flex-col h-full;
-}
+@utility dashboard-layout {
+  @apply min-h-dvh max-h-dvh grid transition-[grid-template-columns] duration-500 ease-out;
 
-@utility sidebar-logo {
-  @apply flex items-center py-10 px-8;
-}
+  &[data-minimized="true"] {
+    @apply grid-cols-[88px_1fr];
+  }
 
-@utility sidebar-expand-toggle {
-  @apply w-full flex items-center px-8 py-4 text-left transition-colors duration-200 hover:bg-grey-100 rounded cursor-pointer;
+  &[data-minimized="false"] {
+    @apply grid-cols-[300px_1fr];
+  }
 }
 
 @utility dashboard-content {
-  @apply h-full w-full px-4 py-6 md:px-10 md:py-8;
+  @apply w-full h-full;
+}
+
+@utility sidebar {
+  @apply flex flex-col gap-6 pb-6 rounded-r-2xl w-full h-full bg-grey-900;
+}
+
+@utility sidebar-header {
+  @apply w-full py-10 px-8 gap-2 h-[100px] transition-all duration-1000;
+
+  &[data-minimize="true"] {
+    @apply w-[88px];
+  }
+}
+
+@utility sidebar-menu-list {
+  @apply flex flex-1 flex-col pr-6 gap-1;
+}
+
+@utility sidebar-menu-item {
+  @apply relative w-full flex flex-1 flex-row gap-4 h-14 px-8 py-4 items-center justify-start cursor-pointer hover:text-grey-100 text-grey-300;
+  &[data-active="true"] {
+    @apply bg-beige-100 rounded-xl;
+  }
+
+  & div:nth-of-type(1) {
+    @apply w-6 h-6;
+  }
+
+  & svg {
+    @apply w-6 h-6;
+  }
+
+  &[data-active="true"] svg {
+    @apply text-green-500;
+  }
+
+  & span {
+    @apply text-preset-3 transition-all duration-500 max-h-full overflow-hidden;
+  }
+
+  &[data-active="true"] span {
+    @apply text-grey-900;
+  }
+
+  &[data-minimized="true"] span {
+    @apply max-w-0;
+  }
+}
+
+@utility sidebar-expand-toggle {
+  @apply text-preset-3 rounded-r-2xl py-4 px-8 flex flex-row w-full justify-start items-center gap-4 h-14 cursor-pointer hover:text-grey-100 text-grey-300;
+
+  & div:nth-of-type(1) {
+    @apply w-6 h-6;
+  }
+
+  & svg {
+    @apply w-6 h-6 transition-all duration-500;
+  }
+
+  &[data-minimized="true"] svg {
+    @apply rotate-180;
+  }
+
+  & span {
+    @apply text-preset-3 transition-all duration-500 max-h-full overflow-hidden;
+  }
+
+  &[data-minimized="true"] span {
+    @apply max-w-0;
+  }
 }

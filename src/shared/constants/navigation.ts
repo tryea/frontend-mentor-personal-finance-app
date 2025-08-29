@@ -44,9 +44,3 @@ export const NAVIGATION_MENU_ITEMS: MenuItem[] = [
     href: "/recurring-bills",
   },
 ];
-
-export const SIDEBAR_CONFIG = {
-  minimizedWidth: "w-20",
-  expandedWidth: "w-64",
-  transitionDuration: "duration-300",
-} as const;

@@ -64,9 +64,7 @@ export const DataTable = ({ transactions }: DataTableProps) => {
                 </td>
                 <td
                   className={`whitespace-nowrap px-6 py-4 text-preset-3 font-semibold ${
-                    transaction.amount > 0
-                      ? "text-green-500"
-                      : "text-gray-900"
+                    transaction.amount > 0 ? "text-green-500" : "text-gray-900"
                   }`}
                 >
                   {transaction.amount > 0 ? "+" : ""}$

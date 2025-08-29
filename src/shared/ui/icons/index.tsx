@@ -3,6 +3,7 @@ import IconCaretDownSVG from "@/src/shared/assets/icons/icon-caret-down.svg";
 import IconCaretLeftSVG from "@/src/shared/assets/icons/icon-caret-left.svg";
 import IconCaretRightSVG from "@/src/shared/assets/icons/icon-caret-right.svg";
 import IconFilterMobileSVG from "@/src/shared/assets/icons/icon-filter-mobile.svg";
+import IconMinimizeMenuSVG from "@/src/shared/assets/icons/icon-minimize-menu.svg";
 import IconNavBudgetsSVG from "@/src/shared/assets/icons/icon-nav-budgets.svg";
 import IconNavOverviewSVG from "@/src/shared/assets/icons/icon-nav-overview.svg";
 import IconNavPotsSVG from "@/src/shared/assets/icons/icon-nav-pots.svg";
@@ -25,6 +26,10 @@ export const IconCaretRight = (props: SVGProps<SVGSVGElement>) => (
 
 export const IconFilterMobile = (props: SVGProps<SVGSVGElement>) => (
   <IconFilterMobileSVG {...props} />
+);
+
+export const IconMinimizeMenu = (props: SVGProps<SVGSVGElement>) => (
+  <IconMinimizeMenuSVG {...props} />
 );
 
 export const IconNavBudgets = (props: SVGProps<SVGSVGElement>) => (

@@ -3,7 +3,7 @@ import {
   IconFilterMobile,
   IconSearch,
   IconSortMobile,
-} from '@/src/shared/ui/icons';
+} from "@/src/shared/ui/icons";
 
 export const FilterAndSearchTable = () => {
   return (
