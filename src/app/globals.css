@@ -235,3 +235,35 @@ body {
 @utility progress-track {
   @apply h-2 w-full bg-grey-100 rounded-full overflow-hidden;
 }
+
+@utility pots-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+@utility pot-card {
+  @apply card stack-6;
+}
+
+@utility pot-header-left {
+  @apply flex items-center gap-2;
+}
+
+@utility pot-amount-row {
+  @apply row-between;
+}
+
+@utility pot-meta-row {
+  @apply row-between;
+}
+
+@utility btn-soft {
+  @apply flex-1 py-3 rounded-lg text-preset-4-bold bg-beige-100 text-grey-900 text-center;
+}
+
+@utility btn-group {
+  @apply grid grid-cols-2 gap-4;
+}
+
+@utility dot-2 {
+  @apply h-2 w-2 rounded-full;
+}
