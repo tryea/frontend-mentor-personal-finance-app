@@ -215,3 +215,23 @@ body {
 @utility big-card {
   @apply p-8;
 }
+
+@utility card {
+  @apply rounded-xl bg-white p-6 md:p-8;
+}
+
+@utility stack-6 {
+  @apply flex flex-col gap-6;
+}
+
+@utility row-between {
+  @apply flex flex-row items-center justify-between;
+}
+
+@utility divider-h {
+  @apply h-px w-full bg-grey-100;
+}
+
+@utility progress-track {
+  @apply h-2 w-full bg-grey-100 rounded-full overflow-hidden;
+}
