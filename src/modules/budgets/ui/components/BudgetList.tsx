@@ -10,17 +10,24 @@ type Item = {
   color: { bgClass: string; cssVar: string };
 };
 
-export const BudgetList = ({ items, toCurrency }: { items: Item[]; toCurrency: (n: number) => string }) => {
+export const BudgetList = ({ items, toCurrency, onEdit }: { items: Item[]; toCurrency: (n: number) => string; onEdit?: (index: number) => void }) => {
   return (
     <div className="flex flex-col gap-6">
-      {items.map((b) => (
+      {items.map((b, index) => (
         <section key={b.category} className="card stack-6">
           <header className="row-between">
             <div className="flex items-center gap-2">
               <span className={`h-2 w-2 rounded-full ${b.color.bgClass}`} />
               <h3 className="text-preset-3 text-grey-900">{b.category}</h3>
             </div>
-            <span className="text-preset-5 text-grey-500">Maximum of ${b.maximum.toFixed(2)}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-preset-5 text-grey-500">Maximum of ${b.maximum.toFixed(2)}</span>
+              {onEdit && (
+                <button aria-label="Edit Budget" onClick={() => onEdit(index)} className="p-2 rounded-lg hover:bg-grey-100">
+                  <img src="/icons/icon-ellipsis.svg" alt="more" className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </header>
 
           <div className="flex flex-col gap-2">

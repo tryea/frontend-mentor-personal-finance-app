@@ -5,6 +5,7 @@ import { BudgetsHeader } from "./components/BudgetsHeader";
 import { BudgetList } from "./components/BudgetList";
 import { useMemo, useState } from "react";
 import { BudgetsAddBudgetModal, type AddBudgetPayload } from "./components/BudgetsAddBudgetModal";
+import { BudgetsEditBudgetModal, type EditBudgetPayload } from "./components/BudgetsEditBudgetModal";
 
 export interface BudgetItem {
   category: string;
@@ -44,6 +45,8 @@ const data: DataShape = raw as unknown as DataShape;
 
 export const BudgetsScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [budgets, setBudgets] = useState<BudgetItem[]>(data.budgets);
   const transactions = data.transactions;
 
@@ -72,6 +75,23 @@ export const BudgetsScreen = () => {
     setBudgets((prev) => [...prev, { category: payload.category, maximum: payload.maximum, theme: payload.theme }]);
   };
 
+  const handleEditClick = (index: number) => {
+    setEditIndex(index);
+    setEditOpen(true);
+  };
+
+  const handleEditSubmit = (payload: EditBudgetPayload) => {
+    setBudgets((prev) =>
+      prev.map((b, idx) =>
+        idx === editIndex
+          ? { category: payload.category, maximum: payload.maximum, theme: payload.theme }
+          : b
+      )
+    );
+  };
+
+  const initialForEdit = editIndex !== null ? budgets[editIndex] ?? null : null;
+
   return (
     <>
       <LayoutHeader title="Budgets" actionName="Add New Budget" onActionClick={() => setIsOpen(true)} />
@@ -80,13 +100,20 @@ export const BudgetsScreen = () => {
           items={enriched.map((e) => ({ name: e.category, spent: e.spent, maximum: e.maximum, color: e.color }))}
           total={totals}
         />
-        <BudgetList items={enriched} toCurrency={toCurrency} />
+        <BudgetList items={enriched} toCurrency={toCurrency} onEdit={handleEditClick} />
       </div>
       <BudgetsAddBudgetModal
         open={isOpen}
         onClose={() => setIsOpen(false)}
         onSubmit={handleSubmit}
         existingCategories={budgets.map((b) => b.category)}
+      />
+      <BudgetsEditBudgetModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        onSubmit={handleEditSubmit}
+        existingCategories={budgets.map((b) => b.category)}
+        initial={initialForEdit}
       />
     </>
   );
