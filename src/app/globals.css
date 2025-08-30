@@ -313,3 +313,15 @@ body {
 @utility action-menu-item {
   @apply w-full text-left text-preset-4 py-2 px-3 rounded-md hover:bg-grey-100;
 }
+
+@utility add-money-amount-label {
+  @apply text-preset-5 text-grey-500;
+}
+
+@utility add-money-new-total {
+  @apply text-preset-1 text-grey-900;
+}
+
+@utility add-money-dollar-prefix {
+  @apply absolute left-5 top-1/2 -translate-y-1/2 text-grey-500;
+}
