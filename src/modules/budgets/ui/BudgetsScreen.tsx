@@ -6,6 +6,7 @@ import { BudgetList } from "./components/BudgetList";
 import { useMemo, useState } from "react";
 import { BudgetsAddBudgetModal, type AddBudgetPayload } from "./components/BudgetsAddBudgetModal";
 import { BudgetsEditBudgetModal, type EditBudgetPayload } from "./components/BudgetsEditBudgetModal";
+import { BudgetsDeleteBudgetModal } from "./components/BudgetsDeleteBudgetModal";
 
 export interface BudgetItem {
   category: string;
@@ -47,6 +48,8 @@ export const BudgetsScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [budgets, setBudgets] = useState<BudgetItem[]>(data.budgets);
   const transactions = data.transactions;
 
@@ -80,41 +83,37 @@ export const BudgetsScreen = () => {
     setEditOpen(true);
   };
 
+  const handleDeleteClick = (index: number) => {
+    setDeleteIndex(index);
+    setDeleteOpen(true);
+  };
+
   const handleEditSubmit = (payload: EditBudgetPayload) => {
     setBudgets((prev) =>
-      prev.map((b, idx) =>
-        idx === editIndex
-          ? { category: payload.category, maximum: payload.maximum, theme: payload.theme }
-          : b
-      )
+      prev.map((b, idx) => (idx === editIndex ? { category: payload.category, maximum: payload.maximum, theme: payload.theme } : b))
     );
   };
 
+  const confirmDelete = () => {
+    if (deleteIndex === null) return;
+    setBudgets((prev) => prev.filter((_, idx) => idx !== deleteIndex));
+    setDeleteOpen(false);
+    setDeleteIndex(null);
+  };
+
   const initialForEdit = editIndex !== null ? budgets[editIndex] ?? null : null;
+  const categoryForDelete = deleteIndex !== null ? budgets[deleteIndex]?.category ?? null : null;
 
   return (
     <>
       <LayoutHeader title="Budgets" actionName="Add New Budget" onActionClick={() => setIsOpen(true)} />
       <div className="flex flex-col gap-6">
-        <BudgetsHeader
-          items={enriched.map((e) => ({ name: e.category, spent: e.spent, maximum: e.maximum, color: e.color }))}
-          total={totals}
-        />
-        <BudgetList items={enriched} toCurrency={toCurrency} onEdit={handleEditClick} />
+        <BudgetsHeader items={enriched.map((e) => ({ name: e.category, spent: e.spent, maximum: e.maximum, color: e.color }))} total={totals} />
+        <BudgetList items={enriched} toCurrency={toCurrency} onEdit={handleEditClick} onDelete={handleDeleteClick} />
       </div>
-      <BudgetsAddBudgetModal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        onSubmit={handleSubmit}
-        existingCategories={budgets.map((b) => b.category)}
-      />
-      <BudgetsEditBudgetModal
-        open={editOpen}
-        onClose={() => setEditOpen(false)}
-        onSubmit={handleEditSubmit}
-        existingCategories={budgets.map((b) => b.category)}
-        initial={initialForEdit}
-      />
+      <BudgetsAddBudgetModal open={isOpen} onClose={() => setIsOpen(false)} onSubmit={handleSubmit} existingCategories={budgets.map((b) => b.category)} />
+      <BudgetsEditBudgetModal open={editOpen} onClose={() => setEditOpen(false)} onSubmit={handleEditSubmit} existingCategories={budgets.map((b) => b.category)} initial={initialForEdit} />
+      <BudgetsDeleteBudgetModal open={deleteOpen} onClose={() => setDeleteOpen(false)} onConfirm={confirmDelete} category={categoryForDelete} />
     </>
   );
 };

@@ -296,3 +296,20 @@ body {
 @utility btn-primary {
   @apply bg-grey-900 text-white rounded-lg text-preset-4-bold py-3 text-center;
 }
+
+/* Additional utilities for actions & danger styles */
+@utility btn-danger {
+  @apply bg-red-500 text-white rounded-lg text-preset-4-bold py-3 text-center;
+}
+
+@utility btn-link {
+  @apply text-preset-4-bold text-grey-500 text-center;
+}
+
+@utility action-menu {
+  @apply absolute right-0 top-full mt-2 bg-white border border-beige-500 rounded-lg shadow-md p-2 w-40 z-10;
+}
+
+@utility action-menu-item {
+  @apply w-full text-left text-preset-4 py-2 px-3 rounded-md hover:bg-grey-100;
+}

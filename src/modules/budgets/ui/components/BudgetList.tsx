@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TransactionItem } from "../BudgetsScreen";
 
 type Item = {
@@ -10,7 +10,25 @@ type Item = {
   color: { bgClass: string; cssVar: string };
 };
 
-export const BudgetList = ({ items, toCurrency, onEdit }: { items: Item[]; toCurrency: (n: number) => string; onEdit?: (index: number) => void }) => {
+export const BudgetList = ({
+  items,
+  toCurrency,
+  onEdit,
+  onDelete,
+}: {
+  items: Item[];
+  toCurrency: (n: number) => string;
+  onEdit?: (index: number) => void;
+  onDelete?: (index: number) => void;
+}) => {
+  const [menuOpenIndex, setMenuOpenIndex] = useState<number | null>(null);
+
+  const toggleMenu = (index: number) => {
+    setMenuOpenIndex((prev) => (prev === index ? null : index));
+  };
+
+  const closeMenu = () => setMenuOpenIndex(null);
+
   return (
     <div className="flex flex-col gap-6">
       {items.map((b, index) => (
@@ -20,12 +38,32 @@ export const BudgetList = ({ items, toCurrency, onEdit }: { items: Item[]; toCur
               <span className={`h-2 w-2 rounded-full ${b.color.bgClass}`} />
               <h3 className="text-preset-3 text-grey-900">{b.category}</h3>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative">
               <span className="text-preset-5 text-grey-500">Maximum of ${b.maximum.toFixed(2)}</span>
-              {onEdit && (
-                <button aria-label="Edit Budget" onClick={() => onEdit(index)} className="p-2 rounded-lg hover:bg-grey-100">
-                  <img src="/icons/icon-ellipsis.svg" alt="more" className="h-4 w-4" />
-                </button>
+              {(onEdit || onDelete) && (
+                <div className="relative">
+                  <button
+                    aria-label="Budget actions"
+                    onClick={() => toggleMenu(index)}
+                    className="p-2 rounded-lg hover:bg-grey-100"
+                  >
+                    <img src="/icons/icon-ellipsis.svg" alt="more" className="h-4 w-4" />
+                  </button>
+                  {menuOpenIndex === index && (
+                    <div className="action-menu" onMouseLeave={closeMenu}>
+                      {onEdit && (
+                        <button className="action-menu-item" onClick={() => { onEdit(index); closeMenu(); }}>
+                          Edit Budget
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button className="action-menu-item" onClick={() => { onDelete(index); closeMenu(); }}>
+                          Delete Budget
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </header>
