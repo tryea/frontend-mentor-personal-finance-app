@@ -5,6 +5,7 @@ import { PotsList } from "./components/PotsList";
 import { useState } from "react";
 import { PotsAddPotModal, type AddPotPayload } from "./components/PotsAddPotModal";
 import { PotsEditPotModal, type EditPotPayload } from "./components/PotsEditPotModal";
+import { PotsDeletePotModal } from "./components/PotsDeletePotModal";
 
 export type PotItem = {
   name: string;
@@ -20,6 +21,7 @@ export const PotsScreen = () => {
   const [pots, setPots] = useState<PotItem[]>(initial);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
   const handleAdd = (payload: AddPotPayload) => {
     setPots((prev) => [...prev, { name: payload.name, target: payload.target, total: 0, theme: payload.theme }]);
@@ -27,6 +29,9 @@ export const PotsScreen = () => {
 
   const openEdit = (index: number) => setEditIndex(index);
   const closeEdit = () => setEditIndex(null);
+
+  const openDelete = (index: number) => setDeleteIndex(index);
+  const closeDelete = () => setDeleteIndex(null);
 
   const handleEdit = (payload: EditPotPayload) => {
     if (editIndex === null) return;
@@ -36,18 +41,31 @@ export const PotsScreen = () => {
     closeEdit();
   };
 
+  const handleDelete = () => {
+    if (deleteIndex === null) return;
+    setPots((prev) => prev.filter((_, idx) => idx !== deleteIndex));
+    closeDelete();
+  };
+
   const editing = editIndex !== null ? pots[editIndex] : null;
+  const deleting = deleteIndex !== null ? pots[deleteIndex] : null;
 
   return (
     <>
       <LayoutHeader title="Pots" actionName="Add New Pot" onActionClick={() => setIsAddOpen(true)} />
-      <PotsList items={pots} onEdit={openEdit} />
+      <PotsList items={pots} onEdit={openEdit} onDelete={openDelete} />
       <PotsAddPotModal open={isAddOpen} onClose={() => setIsAddOpen(false)} onSubmit={handleAdd} />
       <PotsEditPotModal
         open={editIndex !== null}
         onClose={closeEdit}
         onSubmit={handleEdit}
         initial={editing ?? undefined}
+      />
+      <PotsDeletePotModal
+        open={deleteIndex !== null}
+        onClose={closeDelete}
+        onConfirm={handleDelete}
+        name={deleting?.name ?? ""}
       />
     </>
   );

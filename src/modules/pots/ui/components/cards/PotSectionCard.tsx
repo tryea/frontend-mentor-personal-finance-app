@@ -11,7 +11,7 @@ const COLOR_MAP: Record<string, { bgClass: string; cssVar: string }> = {
 
 const toCurrency = (n: number) => `$${n.toFixed(2)}`;
 
-export const PotSectionCard = ({ item, index, onEdit }: { item: PotItem; index: number; onEdit: (index: number) => void }) => {
+export const PotSectionCard = ({ item, index, onEdit, onDelete }: { item: PotItem; index: number; onEdit: (index: number) => void; onDelete: (index: number) => void }) => {
   const color = COLOR_MAP[item.theme] ?? { bgClass: "bg-grey-300", cssVar: "var(--color-grey-300)" };
   const pct = Math.min((item.total / item.target) * 100, 100);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,6 +31,9 @@ export const PotSectionCard = ({ item, index, onEdit }: { item: PotItem; index: 
             <div className="action-menu" onMouseLeave={() => setMenuOpen(false)}>
               <button className="action-menu-item" onClick={() => { onEdit(index); setMenuOpen(false); }}>
                 Edit Pot
+              </button>
+              <button className="action-menu-item text-red-500" onClick={() => { onDelete(index); setMenuOpen(false); }}>
+                Delete Pot
               </button>
             </div>
           )}
