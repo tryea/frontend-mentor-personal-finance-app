@@ -90,7 +90,7 @@ body {
 }
 
 @utility dashboard-layout {
-  @apply min-h-dvh max-h-dvh grid transition-[grid-template-rows] lg:transition-[grid-template-columns] duration-500 ease-out grid-rows-[1fr_52px] md:grid-rows-[1fr_74px] lg:grid-rows-none;
+  @apply min-h-dvh max-h-dvh grid transition-[grid-template-rows] lg:transition-[grid-template-columns] duration-500 ease-out grid-rows-[1fr_52px] md:grid-rows-[1fr_74px] lg:grid-rows-[1fr];
 
   &[data-minimized="true"] {
     @apply lg:grid-cols-[88px_1fr];
@@ -102,11 +102,11 @@ body {
 }
 
 @utility dashboard-content {
-  @apply max-w-full w-full h-full max-h-full overflow-y-auto px-4 py-6 md:px-10 md:py-8 flex flex-1 flex-col gap-8;
+  @apply max-w-full w-full min-h-0 h-full max-h-full overflow-y-auto px-4 py-6 md:px-10 md:py-8 flex flex-1 flex-col gap-8;
 }
 
 @utility sidebar {
-  @apply hidden lg:flex flex-col gap-6 pb-6 rounded-r-2xl w-full h-full bg-grey-900;
+  @apply hidden lg:flex flex-col gap-6 pb-6 rounded-r-2xl w-full bg-grey-900 max-h-full min-h-0 h-full;
 }
 
 @utility sidebar-header {

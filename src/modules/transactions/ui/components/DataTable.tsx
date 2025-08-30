@@ -15,7 +15,7 @@ interface DataTableProps {
 
 export const DataTable = ({ transactions }: DataTableProps) => {
   return (
-    <div>
+    <div className="flex flex-1 flex-col grow min-w-0 min-h-0 max-w-full overflow-y-scroll overscroll-y-contain">
       {/* Desktop Table */}
       <div className="hidden md:flex flex-col gap-6">
         {/* Table Header */}

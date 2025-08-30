@@ -7,7 +7,7 @@ import {
 
 export const FilterAndSearchTable = () => {
   return (
-    <div className="flex flex-row items-center justify-between gap-6 max-w-full min-w-0">
+    <div className="flex flex-row items-center justify-between gap-6 max-w-full min-w-0 shrink-0 min-h-0 h-[50px]">
       {/* Search Box */}
       <div className="flex flex-row flex-1 min-w-0 max-w-[320px] shrink grow items-center justify-start gap-4 border border-beige-500 rounded-lg pr-5 lg:justify-between ">
         <input

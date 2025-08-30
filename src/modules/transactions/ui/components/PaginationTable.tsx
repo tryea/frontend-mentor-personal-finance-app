@@ -55,7 +55,7 @@ export const PaginationTable = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between shrink-0 min-h-0 h-[40px]">
       <button
         onClick={handlePreviousPage}
         disabled={currentPage === 1}
