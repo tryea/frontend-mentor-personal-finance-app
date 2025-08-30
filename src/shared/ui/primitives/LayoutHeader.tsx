@@ -1,3 +1,4 @@
+'use client'
 type LayoutHeaderProps = {
   title: string;
   actionName: string;
