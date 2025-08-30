@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { PotItem } from "../../PotsScreen";
 
 const COLOR_MAP: Record<string, { bgClass: string; cssVar: string }> = {
@@ -11,20 +11,33 @@ const COLOR_MAP: Record<string, { bgClass: string; cssVar: string }> = {
 
 const toCurrency = (n: number) => `$${n.toFixed(2)}`;
 
-export const PotSectionCard = ({ item }: { item: PotItem }) => {
+export const PotSectionCard = ({ item, index, onEdit }: { item: PotItem; index: number; onEdit: (index: number) => void }) => {
   const color = COLOR_MAP[item.theme] ?? { bgClass: "bg-grey-300", cssVar: "var(--color-grey-300)" };
   const pct = Math.min((item.total / item.target) * 100, 100);
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <section className="pot-card">
       <header className="row-between">
-        <div className="pot-header-left">
+        <div className="flex items-center gap-2">
           <span className={`dot-2 ${color.bgClass}`} />
           <h3 className="text-preset-3 text-grey-900">{item.name}</h3>
         </div>
-        <button aria-label="more" className="text-grey-500">...</button>
+        <div className="relative">
+          <button aria-label="Pot actions" onClick={() => setMenuOpen((v) => !v)} className="p-2 rounded-lg hover:bg-grey-100">
+            <img src="/icons/icon-ellipsis.svg" alt="more" className="h-4 w-4" />
+          </button>
+          {menuOpen && (
+            <div className="action-menu" onMouseLeave={() => setMenuOpen(false)}>
+              <button className="action-menu-item" onClick={() => { onEdit(index); setMenuOpen(false); }}>
+                Edit Pot
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
-      <div className="pot-amount-row">
+      <div className="row-between">
         <span className="text-preset-4 text-grey-500">Total Saved</span>
         <span className="text-preset-1 text-grey-900">{toCurrency(item.total)}</span>
       </div>
@@ -33,13 +46,13 @@ export const PotSectionCard = ({ item }: { item: PotItem }) => {
         <div className="progress-track">
           <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color.cssVar }} />
         </div>
-        <div className="pot-meta-row">
+        <div className="row-between">
           <span className="text-preset-5 text-grey-500">{pct.toFixed(1)}%</span>
           <span className="text-preset-5 text-grey-500">Target of {toCurrency(item.target)}</span>
         </div>
       </div>
 
-      <div className="btn-group">
+      <div className="grid grid-cols-2 gap-2">
         <button className="btn-soft">+ Add Money</button>
         <button className="btn-soft opacity-60">Withdraw</button>
       </div>
