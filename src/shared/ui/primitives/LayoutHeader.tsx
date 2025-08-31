@@ -1,7 +1,7 @@
-'use client'
+"use client";
 type LayoutHeaderProps = {
   title: string;
-  actionName: string;
+  actionName?: string;
   onActionClick?: () => void;
 };
 
