@@ -333,3 +333,23 @@ body {
     @apply bg-grey-900 text-white;
   }
 }
+
+@utility login-container {
+  @apply min-h-screen flex items-center justify-center bg-beige-100 p-4;
+}
+
+@utility login-card {
+  @apply bg-white rounded-xl p-8 w-full max-w-md shadow-sm;
+}
+
+@utility login-form-wrapper {
+  @apply space-y-6;
+}
+
+@utility login-header {
+  @apply text-center space-y-2 mb-8;
+}
+
+@utility login-form {
+  @apply space-y-6;
+}
