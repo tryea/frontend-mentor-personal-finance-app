@@ -1,7 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SummaryCard from "./SummaryCard";
 import dataJson from "../../../../../data.json";
 import { redirect } from "next/navigation";
+import { dashboardService } from "../../../dashboard/services/dashboardService";
+import { RecurringBill } from "../../../dashboard/domain/types";
 
 type Transaction = {
   avatar?: string;
@@ -15,11 +17,41 @@ type Transaction = {
 const toCurrency = (n: number) => `$${n.toFixed(2)}`;
 
 const SummaryRecurringBills = () => {
+  const [recurringBills, setRecurringBills] = useState<RecurringBill[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRecurringBills = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await dashboardService.getOverview();
+        setRecurringBills(data.recurringBills);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch recurring bills data');
+        // Fallback to mock data on error
+        const mockRecurring = (dataJson.transactions as Transaction[])
+          .filter((t) => t.recurring)
+          .map((t, index) => ({
+            id: `bill-${index}`,
+            name: t.name,
+            amount: Math.abs(t.amount),
+            date: t.date,
+            recurring: t.recurring,
+          }));
+        setRecurringBills(mockRecurring);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecurringBills();
+  }, []);
+
   const { paid, upcoming, dueSoon, total } = useMemo(() => {
     const now = new Date();
-    const recurring = (dataJson.transactions as Transaction[]).filter(
-      (t) => t.recurring
-    );
+    const recurring = recurringBills || [];
 
     const addMonths = (d: Date, months: number) => {
       const x = new Date(d.getTime());
@@ -36,12 +68,12 @@ const SummaryRecurringBills = () => {
       string,
       { amount: number; latestDate: Date; nextDueDate: Date }
     >();
-    for (const t of recurring) {
-      const d = new Date(t.date);
-      const existing = map.get(t.name);
+    for (const bill of recurring) {
+      const d = new Date(bill.date);
+      const existing = map.get(bill.name);
       if (!existing || d > existing.latestDate) {
-        const amount = Math.abs(t.amount);
-        map.set(t.name, {
+        const amount = Math.abs(bill.amount);
+        map.set(bill.name, {
           amount,
           latestDate: d,
           nextDueDate: addMonths(d, 1),
@@ -69,7 +101,7 @@ const SummaryRecurringBills = () => {
       .reduce((acc, it) => acc + it.amount, 0);
 
     return { paid, upcoming, dueSoon, total };
-  }, []);
+  }, [recurringBills]);
 
   return (
     <SummaryCard
