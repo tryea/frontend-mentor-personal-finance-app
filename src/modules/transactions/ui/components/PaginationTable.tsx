@@ -59,9 +59,10 @@ export const PaginationTable = ({
       <button
         onClick={handlePreviousPage}
         disabled={currentPage === 1}
-        className="h-10 w-10 flex items-center justify-center rounded-lg border border-grey-500 bg-white text-preset-4 text-grey-900 hover:bg-grey-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="group transaction-table-pagination-button"
       >
-        <IconCaretLeft className="w-4 h-4 text-grey-500" />
+        <IconCaretLeft className="w-4 h-4 text-grey-500 group-hover:text-white" />
+        Prev
       </button>
 
       <div className="flex items-center gap-2">
@@ -69,11 +70,8 @@ export const PaginationTable = ({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`flex h-10 w-10 items-center justify-center rounded-lg border text-preset-4 ${
-              currentPage === page
-                ? "border-gray-900 bg-gray-900 text-white"
-                : "border-gray-200 bg-white text-gray-900 hover:bg-gray-50"
-            }`}
+            data-active={currentPage === page}
+            className={"transaction-table-pagination-button"}
           >
             {page}
           </button>
@@ -83,9 +81,10 @@ export const PaginationTable = ({
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className="h-10 w-10 flex items-center justify-center rounded-lg border border-grey-500 bg-white text-preset-4 text-grey-900 hover:bg-grey-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="transaction-table-pagination-button group"
       >
-        <IconCaretRight className="w-4 h-4 text-grey-500" />
+        Next
+        <IconCaretRight className="w-4 h-4 text-grey-500 group-hover:text-white" />
       </button>
     </div>
   );
