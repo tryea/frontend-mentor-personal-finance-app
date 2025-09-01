@@ -16,7 +16,7 @@ export const LayoutHeader = ({
       {onActionClick && (
         <button
           onClick={onActionClick}
-          className="bg-grey-900 text-white flex flex-row p-4 gap-4 justify-center items-center rounded-lg text-preset-4-bold"
+          className="bg-grey-900 hover:bg-grey-500 hover:text-white text-white flex flex-row p-4 gap-4 justify-center items-center rounded-lg text-preset-4-bold"
         >
           {actionName}
         </button>
