@@ -6,6 +6,7 @@ interface SummaryCardProps {
   title: string;
   className?: string;
   onSeeDetailsClick: () => void;
+  actionLabel?: string;
 }
 
 const SummaryCard = ({
@@ -13,6 +14,7 @@ const SummaryCard = ({
   className,
   title,
   onSeeDetailsClick,
+  actionLabel = "See Details",
 }: SummaryCardProps) => {
   return (
     <div className={`big-card bg-white rounded-xl flex flex-col ${className}`}>
@@ -20,9 +22,9 @@ const SummaryCard = ({
         <p className="text-preset-2 text-grey-900">{title}</p>
         <button
           onClick={onSeeDetailsClick}
-          className="text-preset-4 text-grey-500 flex flex-row gap-3"
+          className="text-preset-4 text-grey-500 flex flex-row gap-3 cursor-pointer items-center"
         >
-          See Details
+          {actionLabel}
           <IconCaretRight className="inline-block text-grey-500 w-3 h-3" />
         </button>
       </div>
