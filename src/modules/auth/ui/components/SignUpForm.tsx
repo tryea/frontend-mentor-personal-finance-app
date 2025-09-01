@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { SignUpFormField } from "./SignUpFormField";
 import { SignUpButton } from "./SignUpButton";
+import { authService, type RegisterRequest } from "../../services/authService";
 
 export type SignUpPayload = {
   name: string;
@@ -14,6 +15,8 @@ export const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,20 +33,37 @@ export const SignUpForm = () => {
     if (!isValid || isLoading) return;
     
     setIsLoading(true);
+    setError("");
+    setSuccess(false);
     
     try {
-      // TODO: Implement actual sign up logic
-      console.log("Sign up attempt:", { name, email, password });
+      const [firstName, ...lastNameParts] = name.trim().split(" ");
+      const lastName = lastNameParts.join(" ") || firstName;
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const registerData: RegisterRequest = {
+        email: email.trim(),
+        password,
+        first_name: firstName,
+        last_name: lastName,
+      };
       
-      // Reset form on success
-      setName("");
-      setEmail("");
-      setPassword("");
+      const response = await authService.register(registerData);
+      
+      if (response.success) {
+        setSuccess(true);
+        // Reset form on success
+        setName("");
+        setEmail("");
+        setPassword("");
+        
+        // Redirect to dashboard or login after successful registration
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      }
     } catch (error) {
       console.error("Sign up error:", error);
+      setError(error instanceof Error ? error.message : "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -83,6 +103,18 @@ export const SignUpForm = () => {
           placeholder="Passwords must be at least 8 characters"
           required
         />
+        
+        {error && (
+          <div className="text-center p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-preset-5 text-red-600">{error}</p>
+          </div>
+        )}
+        
+        {success && (
+          <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-preset-5 text-green-600">Account created successfully! Redirecting to login...</p>
+          </div>
+        )}
         
         <SignUpButton
           isValid={isValid}

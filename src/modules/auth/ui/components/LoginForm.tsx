@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { LoginFormField } from "./LoginFormField";
 import { LoginButton } from "./LoginButton";
+import { authService, type LoginRequest } from "../../services/authService";
 
 export type LoginPayload = {
   email: string;
@@ -12,6 +13,8 @@ export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,19 +30,31 @@ export const LoginForm = () => {
     if (!isValid || isLoading) return;
     
     setIsLoading(true);
+    setError("");
+    setSuccess(false);
     
     try {
-      // TODO: Implement actual login logic
-      console.log("Login attempt:", { email, password });
+      const loginData: LoginRequest = {
+        email: email.trim(),
+        password,
+      };
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await authService.login(loginData);
       
-      // Reset form on success
-      setEmail("");
-      setPassword("");
+      if (response.success) {
+        setSuccess(true);
+        // Reset form on success
+        setEmail("");
+        setPassword("");
+        
+        // Redirect to dashboard after successful login
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+      }
     } catch (error) {
       console.error("Login error:", error);
+      setError(error instanceof Error ? error.message : "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +85,18 @@ export const LoginForm = () => {
           placeholder="Enter your password"
           required
         />
+        
+        {error && (
+          <div className="text-center p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-preset-5 text-red-600">{error}</p>
+          </div>
+        )}
+        
+        {success && (
+          <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-preset-5 text-green-600">Login successful! Redirecting...</p>
+          </div>
+        )}
         
         <LoginButton
           isValid={isValid}
