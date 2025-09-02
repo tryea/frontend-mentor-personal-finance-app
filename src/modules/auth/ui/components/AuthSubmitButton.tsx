@@ -2,11 +2,20 @@ import React from "react";
 
 type Props = {
   label: string;
+  disabled?: boolean;
 };
 
-const AuthSubmitButton = ({ label }: Props) => {
+const AuthSubmitButton = ({ label, disabled = false }: Props) => {
   return (
-    <button className="w-full bg-grey-900 rounded-lg text-white text-preset-4-bold flex items-center justify-center p-4">
+    <button
+      type="submit"
+      disabled={disabled}
+      className={`mt-4 w-full rounded-lg text-white text-preset-4-bold flex items-center justify-center p-4 ${
+        disabled
+          ? "bg-grey-500 cursor-not-allowed"
+          : "bg-grey-900 hover:bg-grey-700"
+      }`}
+    >
       {label}
     </button>
   );

@@ -1,5 +1,8 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "../schemas/auth.schema";
 import AuthFooter from "./components/AuthFooter";
 import AuthFormField from "./components/AuthFormField";
 import AuthFormWrapper from "./components/AuthFormWrapper";
@@ -7,23 +10,67 @@ import AuthHeader from "./components/AuthHeader";
 import AuthSubmitButton from "./components/AuthSubmitButton";
 
 export const LoginScreen = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      console.log("Login data:", data);
+      // TODO: Implement actual login API call
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        // Handle successful login
+        console.log("Login successful");
+      } else {
+        // Handle login error
+        console.error("Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
   return (
-    <div className="login-container">
+    <div className="auth-container">
       <AuthHeader title="Login" />
-      <AuthFormWrapper>
+
+      <AuthFormWrapper onSubmit={handleSubmit(onSubmit)}>
         <AuthFormField
+          key="email"
+          name="email"
           label="Email"
           type="text"
           placeholder="Enter your email"
+          register={register("email")}
+          error={errors.email?.message}
         />
         <AuthFormField
+          key="password"
+          name="password"
           label="Password"
           type="password"
           placeholder="Enter your password"
+          register={register("password")}
+          error={errors.password?.message}
+        />
+
+        <AuthSubmitButton
+          label={isSubmitting ? "Logging in..." : "Login"}
+          disabled={isSubmitting}
         />
       </AuthFormWrapper>
-
-      <AuthSubmitButton label="Login" />
 
       <AuthFooter
         footerText="Need to create an account?"
