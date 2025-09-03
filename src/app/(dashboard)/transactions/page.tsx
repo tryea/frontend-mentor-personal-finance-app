@@ -1,4 +1,4 @@
-import { TransactionListScreen } from "@/src/modules/transactions/ui/TransactionListScreen";
+import { TransactionListScreen } from "@/modules/transactions/ui/TransactionListScreen";
 
 const TransactionsPage = () => {
   return <TransactionListScreen />;

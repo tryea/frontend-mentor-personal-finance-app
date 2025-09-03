@@ -1,4 +1,4 @@
-import { PotsScreen } from "@/src/modules/pots/ui/PotsScreen";
+import { PotsScreen } from "@/modules/pots/ui/PotsScreen";
 
 const PotsPage = () => {
   return <PotsScreen />;

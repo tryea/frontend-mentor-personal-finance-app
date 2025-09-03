@@ -1,4 +1,4 @@
-import { RecurringBillsScreen } from "@/src/modules/recurring-bills/ui/RecurringBillsScreen";
+import { RecurringBillsScreen } from "@/modules/recurring-bills/ui/RecurringBillsScreen";
 
 const RecurringBillsPage = () => {
   return <RecurringBillsScreen />;

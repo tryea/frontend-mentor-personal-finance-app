@@ -1,5 +1,5 @@
 "use client";
-import { LayoutHeader } from "@/src/shared/ui/primitives/LayoutHeader";
+import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
 import raw from "../../../../data.json";
 import { BudgetsHeader } from "./components/BudgetsHeader";
 import { BudgetList } from "./components/BudgetList";

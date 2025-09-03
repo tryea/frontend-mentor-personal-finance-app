@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAVIGATION_MENU_ITEMS } from "@/src/shared/constants/navigation";
-import type { MenuItem } from "@/src/shared/types/navigation";
+import { NAVIGATION_MENU_ITEMS } from "@/shared/constants/navigation";
+import type { MenuItem } from "@/shared/types/navigation";
 
 interface BottomNavItemProps {
   item: MenuItem;

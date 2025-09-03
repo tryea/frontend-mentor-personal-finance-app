@@ -1,6 +1,6 @@
 import React from "react";
 import SummaryCard from "./SummaryCard";
-import ChartDonut from "@/src/shared/ui/primitives/ChartDonut";
+import ChartDonut from "@/shared/ui/primitives/ChartDonut";
 import { redirect } from "next/navigation";
 
 const SummaryBudgetsCard = () => {

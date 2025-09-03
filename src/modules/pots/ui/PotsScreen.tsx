@@ -1,10 +1,16 @@
 "use client";
-import { LayoutHeader } from "@/src/shared/ui/primitives/LayoutHeader";
+import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
 import data from "../../../../data.json";
 import { PotsList } from "./components/PotsList";
 import { useState } from "react";
-import { PotsAddPotModal, type AddPotPayload } from "./components/PotsAddPotModal";
-import { PotsEditPotModal, type EditPotPayload } from "./components/PotsEditPotModal";
+import {
+  PotsAddPotModal,
+  type AddPotPayload,
+} from "./components/PotsAddPotModal";
+import {
+  PotsEditPotModal,
+  type EditPotPayload,
+} from "./components/PotsEditPotModal";
 import { PotsDeletePotModal } from "./components/PotsDeletePotModal";
 import { PotsAddMoneyModal } from "./components/PotsAddMoneyModal";
 import { PotsWithdrawMoneyModal } from "./components/PotsWithdrawMoneyModal";
@@ -28,7 +34,15 @@ export const PotsScreen = () => {
   const [withdrawIndex, setWithdrawIndex] = useState<number | null>(null);
 
   const handleAdd = (payload: AddPotPayload) => {
-    setPots((prev) => [...prev, { name: payload.name, target: payload.target, total: 0, theme: payload.theme }]);
+    setPots((prev) => [
+      ...prev,
+      {
+        name: payload.name,
+        target: payload.target,
+        total: 0,
+        theme: payload.theme,
+      },
+    ]);
   };
 
   const openEdit = (index: number) => setEditIndex(index);
@@ -45,20 +59,37 @@ export const PotsScreen = () => {
 
   const handleAddMoney = (amount: number) => {
     if (addMoneyIndex === null) return;
-    setPots((prev) => prev.map((p, i) => (i === addMoneyIndex ? { ...p, total: Math.max(0, p.total + amount) } : p)));
+    setPots((prev) =>
+      prev.map((p, i) =>
+        i === addMoneyIndex ? { ...p, total: Math.max(0, p.total + amount) } : p
+      )
+    );
     closeAddMoney();
   };
 
   const handleWithdraw = (amount: number) => {
     if (withdrawIndex === null) return;
-    setPots((prev) => prev.map((p, i) => (i === withdrawIndex ? { ...p, total: Math.max(0, p.total - amount) } : p)));
+    setPots((prev) =>
+      prev.map((p, i) =>
+        i === withdrawIndex ? { ...p, total: Math.max(0, p.total - amount) } : p
+      )
+    );
     closeWithdraw();
   };
 
   const handleEdit = (payload: EditPotPayload) => {
     if (editIndex === null) return;
     setPots((prev) =>
-      prev.map((p, idx) => (idx === editIndex ? { ...p, name: payload.name, target: payload.target, theme: payload.theme } : p))
+      prev.map((p, idx) =>
+        idx === editIndex
+          ? {
+              ...p,
+              name: payload.name,
+              target: payload.target,
+              theme: payload.theme,
+            }
+          : p
+      )
     );
     closeEdit();
   };
@@ -76,9 +107,23 @@ export const PotsScreen = () => {
 
   return (
     <>
-      <LayoutHeader title="Pots" actionName="Add New Pot" onActionClick={() => setIsAddOpen(true)} />
-      <PotsList items={pots} onEdit={openEdit} onDelete={openDelete} onAddMoney={openAddMoney} onWithdraw={openWithdraw} />
-      <PotsAddPotModal open={isAddOpen} onClose={() => setIsAddOpen(false)} onSubmit={handleAdd} />
+      <LayoutHeader
+        title="Pots"
+        actionName="Add New Pot"
+        onActionClick={() => setIsAddOpen(true)}
+      />
+      <PotsList
+        items={pots}
+        onEdit={openEdit}
+        onDelete={openDelete}
+        onAddMoney={openAddMoney}
+        onWithdraw={openWithdraw}
+      />
+      <PotsAddPotModal
+        open={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={handleAdd}
+      />
       <PotsEditPotModal
         open={editIndex !== null}
         onClose={closeEdit}

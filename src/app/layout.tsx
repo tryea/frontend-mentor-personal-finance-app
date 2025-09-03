@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/shared/contexts/ToastContext";
+import QueryProvider from "@/shared/providers/QueryProvider";
 
 const publicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -24,7 +26,9 @@ export default function RootLayout({
         className={`${publicSans.variable} font-sans antialiased bg-beige-100`}
         cz-shortcut-listen="true"
       >
-        {children}
+        <QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   );

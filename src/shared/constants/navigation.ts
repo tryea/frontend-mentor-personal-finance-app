@@ -5,7 +5,7 @@ import {
   IconNavPots,
   IconNavRecurringBills,
   IconNavTransactions,
-} from "@/src/shared/ui/icons/index";
+} from "@/shared/ui/icons/index";
 
 export const NAVIGATION_MENU_ITEMS: MenuItem[] = [
   {

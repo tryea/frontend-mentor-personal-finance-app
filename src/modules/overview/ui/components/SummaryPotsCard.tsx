@@ -1,6 +1,6 @@
 import React from "react";
 import SummaryCard from "./SummaryCard";
-import { IconPot } from "@/src/shared/ui/icons";
+import { IconPot } from "@/shared/ui/icons";
 import { redirect, RedirectType } from "next/navigation";
 
 const SummaryPotsCard = () => {

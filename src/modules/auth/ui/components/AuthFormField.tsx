@@ -1,4 +1,4 @@
-import { IconHidePassword, IconShowPassword } from "@/src/shared/ui/icons";
+import { IconHidePassword, IconShowPassword } from "@/shared/ui/icons";
 import React, { useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 

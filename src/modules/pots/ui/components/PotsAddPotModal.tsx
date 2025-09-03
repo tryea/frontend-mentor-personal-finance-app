@@ -1,5 +1,5 @@
 "use client";
-import { IconCaretDown } from "@/src/shared/ui/icons";
+import { IconCaretDown } from "@/shared/ui/icons";
 import React, { useState } from "react";
 
 export type AddPotPayload = {
@@ -51,11 +51,18 @@ export const PotsAddPotModal = ({
       <div className="modal-panel">
         <header className="modal-header">
           <h2 className="text-preset-2 text-grey-900">Add New Pot</h2>
-          <button aria-label="Close" onClick={onClose} className="text-grey-500">×</button>
+          <button
+            aria-label="Close"
+            onClick={onClose}
+            className="text-grey-500"
+          >
+            ×
+          </button>
         </header>
 
         <p className="text-preset-5 text-grey-500 mt-2">
-          Create a pot to set savings targets. These can help keep you on track as you save for special purchases.
+          Create a pot to set savings targets. These can help keep you on track
+          as you save for special purchases.
         </p>
 
         <form onSubmit={submit} className="stack-6 mt-6">
@@ -66,17 +73,23 @@ export const PotsAddPotModal = ({
               onChange={(e) => setName(e.target.value.slice(0, NAME_LIMIT))}
               className="input-text w-full"
             />
-            <div className="text-right text-preset-5 text-grey-500">{remaining} characters left</div>
+            <div className="text-right text-preset-5 text-grey-500">
+              {remaining} characters left
+            </div>
           </div>
 
           <div className="form-field">
             <label className="text-preset-5 text-grey-500">Target</label>
             <div className="relative">
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">$</span>
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">
+                $
+              </span>
               <input
                 inputMode="decimal"
                 value={target}
-                onChange={(e) => setTarget(e.target.value.replace(/[^0-9.]/g, ""))}
+                onChange={(e) =>
+                  setTarget(e.target.value.replace(/[^0-9.]/g, ""))
+                }
                 className="input-text w-full pl-7"
                 placeholder="$"
               />
@@ -97,10 +110,18 @@ export const PotsAddPotModal = ({
                   </option>
                 ))}
               </select>
-              <IconCaretDown width={16} height={16} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2" />
+              <IconCaretDown
+                width={16}
+                height={16}
+                className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
+              />
             </div>
             <div className="flex items-center gap-2">
-              <span className={`dot-2 ${themes.find((t) => t.value === theme)?.dot ?? "bg-grey-300"}`} />
+              <span
+                className={`dot-2 ${
+                  themes.find((t) => t.value === theme)?.dot ?? "bg-grey-300"
+                }`}
+              />
               <span className="text-preset-4 text-grey-900">
                 {themes.find((t) => t.value === theme)?.name}
               </span>

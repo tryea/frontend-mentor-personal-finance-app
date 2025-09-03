@@ -1,4 +1,4 @@
-import { SignUpScreen } from "@/src/modules/auth/ui/SignUpScreen";
+import { SignUpScreen } from "@/modules/auth/ui/SignUpScreen";
 
 export default function SignUpPage() {
   return <SignUpScreen />;

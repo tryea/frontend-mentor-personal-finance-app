@@ -1,4 +1,4 @@
-import { IconCaretRight } from "@/src/shared/ui/icons";
+import { IconCaretRight } from "@/shared/ui/icons";
 import React from "react";
 
 interface SummaryCardProps {

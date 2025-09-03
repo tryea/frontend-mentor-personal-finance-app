@@ -1,5 +1,5 @@
 "use client";
-import { IconCaretDown } from "@/src/shared/ui/icons";
+import { IconCaretDown } from "@/shared/ui/icons";
 import React, { useMemo, useState } from "react";
 
 export type AddBudgetPayload = {
@@ -54,16 +54,25 @@ export const BudgetsAddBudgetModal = ({
       <div className="modal-panel">
         <header className="modal-header">
           <h2 className="text-preset-2 text-grey-900">Add New Budget</h2>
-          <button aria-label="Close" onClick={onClose} className="text-grey-500">×</button>
+          <button
+            aria-label="Close"
+            onClick={onClose}
+            className="text-grey-500"
+          >
+            ×
+          </button>
         </header>
 
         <p className="text-preset-5 text-grey-500 mt-2">
-          Choose a category to set a spending budget. These categories can help you monitor spending.
+          Choose a category to set a spending budget. These categories can help
+          you monitor spending.
         </p>
 
         <form onSubmit={submit} className="stack-6 mt-6">
           <div className="form-field">
-            <label className="text-preset-5 text-grey-500">Budget Category</label>
+            <label className="text-preset-5 text-grey-500">
+              Budget Category
+            </label>
             <div className="relative">
               <select
                 value={category}
@@ -79,18 +88,26 @@ export const BudgetsAddBudgetModal = ({
                   </option>
                 ))}
               </select>
-              <IconCaretDown width={16} height={16} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2" />
+              <IconCaretDown
+                width={16}
+                height={16}
+                className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
+              />
             </div>
           </div>
 
           <div className="form-field">
             <label className="text-preset-5 text-grey-500">Maximum Spend</label>
             <div className="relative">
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">$</span>
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">
+                $
+              </span>
               <input
                 inputMode="decimal"
                 value={maximum}
-                onChange={(e) => setMaximum(e.target.value.replace(/[^0-9.]/g, ""))}
+                onChange={(e) =>
+                  setMaximum(e.target.value.replace(/[^0-9.]/g, ""))
+                }
                 className="input-text w-full pl-7"
                 placeholder="$"
               />
@@ -111,10 +128,18 @@ export const BudgetsAddBudgetModal = ({
                   </option>
                 ))}
               </select>
-              <IconCaretDown width={16} height={16} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2" />
+              <IconCaretDown
+                width={16}
+                height={16}
+                className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
+              />
             </div>
             <div className="flex items-center gap-2">
-              <span className={`dot-2 ${themes.find((t) => t.value === theme)?.dot ?? "bg-grey-300"}`} />
+              <span
+                className={`dot-2 ${
+                  themes.find((t) => t.value === theme)?.dot ?? "bg-grey-300"
+                }`}
+              />
               <span className="text-preset-4 text-grey-900">
                 {themes.find((t) => t.value === theme)?.name}
               </span>

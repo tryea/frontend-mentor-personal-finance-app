@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PotItem } from "../../PotsScreen";
-import { IconEllipsis } from "@/src/shared/ui/icons";
+import { IconEllipsis } from "@/shared/ui/icons";
 
 const COLOR_MAP: Record<string, { bgClass: string; cssVar: string }> = {
   "#277C78": { bgClass: "bg-green-500", cssVar: "var(--color-green-500)" },

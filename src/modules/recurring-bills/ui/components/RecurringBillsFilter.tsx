@@ -1,4 +1,4 @@
-import { IconCaretDown, IconSearch } from "@/src/shared/ui/icons";
+import { IconCaretDown, IconSearch } from "@/shared/ui/icons";
 
 export const RecurringBillsFilter = ({
   search,
@@ -37,7 +37,11 @@ export const RecurringBillsFilter = ({
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
           </select>
-          <IconCaretDown width={16} height={16} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2" />
+          <IconCaretDown
+            width={16}
+            height={16}
+            className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2"
+          />
         </div>
       </div>
     </div>

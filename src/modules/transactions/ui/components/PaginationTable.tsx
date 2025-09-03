@@ -1,4 +1,4 @@
-import { IconCaretLeft, IconCaretRight } from "@/src/shared/ui/icons";
+import { IconCaretLeft, IconCaretRight } from "@/shared/ui/icons";
 import React from "react";
 
 interface PaginationTableProps {

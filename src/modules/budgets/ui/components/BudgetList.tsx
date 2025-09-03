@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TransactionItem } from "../BudgetsScreen";
-import { IconEllipsis } from "@/src/shared/ui/icons";
+import { IconEllipsis } from "@/shared/ui/icons";
 
 type Item = {
   category: string;

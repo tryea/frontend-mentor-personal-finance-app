@@ -3,13 +3,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "../schemas/auth.schema";
+import { useToast } from "@/shared/contexts/ToastContext";
 import AuthFooter from "./components/AuthFooter";
 import AuthFormField from "./components/AuthFormField";
 import AuthFormWrapper from "./components/AuthFormWrapper";
 import AuthHeader from "./components/AuthHeader";
 import AuthSubmitButton from "./components/AuthSubmitButton";
+import { login } from "../actions";
 
 export const LoginScreen = () => {
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -20,25 +23,16 @@ export const LoginScreen = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      console.log("Login data:", data);
-      // TODO: Implement actual login API call
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        // Handle successful login
-        console.log("Login successful");
-      } else {
-        // Handle login error
-        console.error("Login failed");
-      }
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      await login(formData);
+      showToast("Login successful!", "success");
     } catch (error) {
-      console.error("Login error:", error);
+      showToast(
+        "Login failed. Please check your credentials and try again.",
+        "error"
+      );
     }
   };
 

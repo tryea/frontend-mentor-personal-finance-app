@@ -1,6 +1,6 @@
-'use client'
+"use client";
 import { useMemo, useState } from "react";
-import { LayoutHeader } from "@/src/shared/ui/primitives/LayoutHeader";
+import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
 import data from "../../../../data.json";
 import { RecurringBillsHeader } from "./components/RecurringBillsHeader";
 import { RecurringBillsFilter } from "./components/RecurringBillsFilter";
@@ -32,13 +32,16 @@ const addMonths = (date: Date, months: number) => {
   return d;
 };
 
-const monthDiff = (a: Date, b: Date) => a.getFullYear() * 12 + a.getMonth() - (b.getFullYear() * 12 + b.getMonth());
+const monthDiff = (a: Date, b: Date) =>
+  a.getFullYear() * 12 + a.getMonth() - (b.getFullYear() * 12 + b.getMonth());
 
 export const RecurringBillsScreen = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"latest" | "oldest">("latest");
 
-  const recurring = (data.transactions as Transaction[]).filter((t) => t.recurring);
+  const recurring = (data.transactions as Transaction[]).filter(
+    (t) => t.recurring
+  );
 
   const grouped = useMemo<BillItem[]>(() => {
     const map = new Map<string, BillItem>();
@@ -68,11 +71,14 @@ export const RecurringBillsScreen = () => {
       .filter((it) => monthDiff(now, it.latestDate) === 0)
       .reduce((acc, it) => acc + it.amount, 0);
     const upcoming = grouped
-      .filter((it) => it.nextDueDate > now && monthDiff(it.nextDueDate, now) === 0)
+      .filter(
+        (it) => it.nextDueDate > now && monthDiff(it.nextDueDate, now) === 0
+      )
       .reduce((acc, it) => acc + it.amount, 0);
     const dueSoon = grouped
       .filter((it) => {
-        const diff = (it.nextDueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+        const diff =
+          (it.nextDueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
         return diff >= 0 && diff <= 7;
       })
       .reduce((acc, it) => acc + it.amount, 0);
@@ -80,9 +86,13 @@ export const RecurringBillsScreen = () => {
   }, [grouped]);
 
   const filteredSorted = useMemo(() => {
-    const list = grouped.filter((it) => it.name.toLowerCase().includes(search.toLowerCase()));
+    const list = grouped.filter((it) =>
+      it.name.toLowerCase().includes(search.toLowerCase())
+    );
     return list.sort((a, b) =>
-      sortBy === "latest" ? b.latestDate.getTime() - a.latestDate.getTime() : a.latestDate.getTime() - b.latestDate.getTime()
+      sortBy === "latest"
+        ? b.latestDate.getTime() - a.latestDate.getTime()
+        : a.latestDate.getTime() - b.latestDate.getTime()
     );
   }, [grouped, search, sortBy]);
 
@@ -96,7 +106,12 @@ export const RecurringBillsScreen = () => {
           upcoming={totals.upcoming}
           dueSoon={totals.dueSoon}
         />
-        <RecurringBillsFilter search={search} sortBy={sortBy} onSearch={setSearch} onSort={setSortBy} />
+        <RecurringBillsFilter
+          search={search}
+          sortBy={sortBy}
+          onSearch={setSearch}
+          onSort={setSortBy}
+        />
         <RecurringBillList items={filteredSorted} toCurrency={toCurrency} />
       </div>
     </>
