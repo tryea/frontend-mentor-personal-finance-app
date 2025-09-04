@@ -109,7 +109,7 @@ export const PotsScreen = () => {
     <>
       <LayoutHeader
         title="Pots"
-        actionName="Add New Pot"
+        actionName="+Add New Pot"
         onActionClick={() => setIsAddOpen(true)}
       />
       <PotsList
