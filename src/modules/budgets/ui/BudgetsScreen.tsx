@@ -3,7 +3,8 @@ import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
 import raw from "../../../../data.json";
 import { BudgetsHeader } from "./components/BudgetsHeader";
 import { BudgetList } from "./components/BudgetList";
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession, useUser } from "@clerk/nextjs";
 import {
   BudgetsAddBudgetModal,
   type AddBudgetPayload,
@@ -13,11 +14,21 @@ import {
   type EditBudgetPayload,
 } from "./components/BudgetsEditBudgetModal";
 import { BudgetsDeleteBudgetModal } from "./components/BudgetsDeleteBudgetModal";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export interface BudgetItem {
-  category: string;
-  maximum: number;
-  theme?: string;
+  category_id: string;
+  categories: {
+    id: string;
+    name: string;
+  };
+  maximum_amount: number;
+  theme_id: string;
+  themes: {
+    id: string;
+    name: string;
+    hex_code: string;
+  };
 }
 
 export interface TransactionItem {
@@ -28,22 +39,6 @@ export interface TransactionItem {
   amount: number;
 }
 
-export type CategoryColor = {
-  bgClass: string;
-  cssVar: string;
-};
-
-const CATEGORY_COLORS: Record<string, CategoryColor> = {
-  Entertainment: { bgClass: "bg-green-500", cssVar: "var(--color-green-500)" },
-  Bills: { bgClass: "bg-cyan-500", cssVar: "var(--color-cyan-500)" },
-  "Dining Out": { bgClass: "bg-yellow-500", cssVar: "var(--color-yellow-500)" },
-  "Personal Care": { bgClass: "bg-navy-500", cssVar: "var(--color-navy-500)" },
-};
-
-const toCurrency = (n: number) => `$${n.toFixed(2)}`;
-const parseDate = (s: string) => new Date(s);
-
-// Strongly type imported JSON without using any
 interface DataShape {
   budgets: BudgetItem[];
   transactions: TransactionItem[];
@@ -57,43 +52,71 @@ export const BudgetsScreen = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [budgets, setBudgets] = useState<BudgetItem[]>(data.budgets);
-  const transactions = data.transactions;
+  const [loading, setLoading] = useState(true);
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
+  // Clerk hooks for authentication
+  const { session } = useSession();
 
-  const enriched = useMemo(() => {
-    return budgets.map((b) => {
-      const spent = transactions
-        .filter((t) => t.category === b.category && t.amount < 0)
-        .reduce((acc, t) => acc + Math.abs(t.amount), 0);
-      const free = Math.max(b.maximum - spent, 0);
-      const latest = transactions
-        .filter((t) => t.category === b.category)
-        .sort(
-          (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime()
-        )
-        .slice(0, 4);
-      const color = CATEGORY_COLORS[b.category] ?? {
-        bgClass: "bg-grey-300",
-        cssVar: "var(--color-grey-300)",
-      };
-      return { ...b, spent, free, latest, color };
-    });
-  }, [budgets, transactions]);
+  useEffect(() => {
+    if (!session) return;
 
-  const totals = useMemo(() => {
-    const spent = enriched.reduce((acc, b) => acc + b.spent, 0);
-    const maximum = enriched.reduce((acc, b) => acc + b.maximum, 0);
-    return { spent, maximum };
-  }, [enriched]);
-
-  const handleSubmit = (payload: AddBudgetPayload) => {
-    setBudgets((prev) => [
-      ...prev,
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
       {
-        category: payload.category,
-        maximum: payload.maximum,
-        theme: payload.theme,
-      },
-    ]);
+        accessToken: () => session.getToken()!,
+      }
+    );
+    setSupabase(client);
+  }, [session]);
+
+  // This `useEffect` will wait for the User object to be loaded before requesting
+  // the tasks for the signed in user
+  useEffect(() => {
+    if (!supabase) return;
+
+    async function loadTasks() {
+      if (!supabase) return;
+
+      setLoading(true);
+
+      const { data: budgetsData, error } = await supabase
+        .from("budgets")
+        .select(
+          "categories(id, name), category_id, maximum_amount, theme_id, themes(name, hex_code)"
+        );
+      if (!error) setBudgets(budgetsData);
+      setLoading(false);
+
+      console.log({ budgetsData });
+    }
+
+    loadTasks();
+  }, [supabase]);
+
+  const handleSubmit = async (payload: AddBudgetPayload) => {
+    const newBudget = {
+      category: payload.category,
+      maximum: payload.maximum,
+      theme: payload.theme,
+    };
+
+    // Add to local state immediately for optimistic UI
+    // setBudgets((prev) => [...prev, newBudget]);
+
+    // Save to Supabase if client is available
+    if (supabase) {
+      try {
+        const { error } = await supabase.from("budgets").insert([newBudget]);
+
+        if (error) {
+          console.error("Error saving budget to Supabase:", error);
+          // Could show a toast notification here
+        }
+      } catch (error) {
+        console.error("Error saving budget:", error);
+      }
+    }
   };
 
   const handleEditClick = (index: number) => {
@@ -107,17 +130,17 @@ export const BudgetsScreen = () => {
   };
 
   const handleEditSubmit = (payload: EditBudgetPayload) => {
-    setBudgets((prev) =>
-      prev.map((b, idx) =>
-        idx === editIndex
-          ? {
-              category: payload.category,
-              maximum: payload.maximum,
-              theme: payload.theme,
-            }
-          : b
-      )
-    );
+    // setBudgets((prev) =>
+    //   prev.map((b, idx) =>
+    //     idx === editIndex
+    //       ? {
+    //           category: payload.category,
+    //           maximum: payload.maximum,
+    //           theme: payload.theme,
+    //         }
+    //       : b
+    //   )
+    // );
   };
 
   const confirmDelete = () => {
@@ -139,21 +162,37 @@ export const BudgetsScreen = () => {
         onActionClick={() => setIsOpen(true)}
       />
       <div className="flex flex-col gap-6">
-        <BudgetsHeader
-          items={enriched.map((e) => ({
-            name: e.category,
-            spent: e.spent,
-            maximum: e.maximum,
-            color: e.color,
-          }))}
-          total={totals}
-        />
-        <BudgetList
-          items={enriched}
-          toCurrency={toCurrency}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-        />
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <p className="text-grey-500">Loading budgets...</p>
+          </div>
+        )}
+        {!loading && (
+          <>
+            <BudgetsHeader
+              items={budgets.map((e) => ({
+                name: e.categories.name,
+                spent: 0,
+                maximum: e.maximum_amount,
+                color: e.themes.hex_code,
+              }))}
+              total={{ spent: 0, maximum: 0 }}
+            />
+            <BudgetList
+              items={budgets.map((e) => ({
+                category: e.categories.name,
+                free: 0,
+                color: e.themes.hex_code,
+                latest: [],
+                maximum: e.maximum_amount,
+                spent: 0,
+              }))}
+              toCurrency={(n) => n.toFixed(2)}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          </>
+        )}
       </div>
       <BudgetsAddBudgetModal
         open={isOpen}

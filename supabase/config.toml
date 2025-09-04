@@ -1,0 +1,3 @@
+[auth.third_party.clerk]
+enabled = true
+domain = "https://thorough-lionfish-67.clerk.accounts.dev"

@@ -1,13 +1,12 @@
 "use client";
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { CategoryColor } from "../BudgetsScreen";
 
 type HeaderItem = {
   name: string;
   spent: number;
   maximum: number;
-  color: CategoryColor;
+  color: string;
 };
 
 export const BudgetsHeader = ({
@@ -33,7 +32,7 @@ export const BudgetsHeader = ({
               <div className="flex items-center gap-3">
                 <span
                   className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: it.color.cssVar }}
+                  style={{ backgroundColor: it.color }}
                 />
                 <span className="text-preset-4 text-grey-500">{it.name}</span>
               </div>
@@ -58,7 +57,7 @@ const Donut = ({
   const data = items.map((item) => ({
     name: item.name,
     value: item.spent,
-    color: item.color.cssVar,
+    color: item.color,
   }));
 
   const chartSize = 240;

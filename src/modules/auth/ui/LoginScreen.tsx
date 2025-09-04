@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignIn } from "@clerk/nextjs";
 import { loginSchema, type LoginFormData } from "../schemas/auth.schema";
 import { useToast } from "@/shared/contexts/ToastContext";
 import AuthFooter from "./components/AuthFooter";
@@ -9,10 +10,11 @@ import AuthFormField from "./components/AuthFormField";
 import AuthFormWrapper from "./components/AuthFormWrapper";
 import AuthHeader from "./components/AuthHeader";
 import AuthSubmitButton from "./components/AuthSubmitButton";
-import { login } from "../actions";
 
 export const LoginScreen = () => {
   const { showToast } = useToast();
+  const { signIn, setActive, isLoaded } = useSignIn();
+
   const {
     register,
     handleSubmit,
@@ -22,15 +24,25 @@ export const LoginScreen = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    if (!isLoaded) return;
+
     try {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      await login(formData);
-      showToast("Login successful!", "success");
-    } catch (error) {
+      const result = await signIn.create({
+        identifier: data.email,
+        password: data.password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        showToast("Login successful!", "success");
+      } else {
+        // Handle other statuses if needed
+        console.log("Login result:", result);
+      }
+    } catch (error: any) {
       showToast(
-        "Login failed. Please check your credentials and try again.",
+        error?.errors?.[0]?.message ||
+          "Login failed. Please check your credentials and try again.",
         "error"
       );
     }

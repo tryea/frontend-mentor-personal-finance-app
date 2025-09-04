@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from '@clerk/nextjs';
 import { ToastProvider } from "@/shared/contexts/ToastContext";
 import QueryProvider from "@/shared/providers/QueryProvider";
 
@@ -26,9 +27,11 @@ export default function RootLayout({
         className={`${publicSans.variable} font-sans antialiased bg-beige-100`}
         cz-shortcut-listen="true"
       >
-        <QueryProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </QueryProvider>
+        <ClerkProvider>
+          <QueryProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </QueryProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

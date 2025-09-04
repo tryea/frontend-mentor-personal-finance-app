@@ -8,7 +8,7 @@ type Item = {
   spent: number;
   free: number;
   latest: TransactionItem[];
-  color: { bgClass: string; cssVar: string };
+  color: string;
 };
 
 export const BudgetList = ({
@@ -36,7 +36,10 @@ export const BudgetList = ({
         <section key={b.category} className="card stack-6">
           <header className="row-between">
             <div className="flex items-center gap-2">
-              <span className={`h-2 w-2 rounded-full ${b.color.bgClass}`} />
+              <span
+                className={`h-2 w-2 rounded-full`}
+                style={{ backgroundColor: b.color }}
+              />
               <h3 className="text-preset-3 text-grey-900">{b.category}</h3>
             </div>
             <div className="flex items-center gap-3 relative">
@@ -89,7 +92,7 @@ export const BudgetList = ({
                 className="h-full rounded-full"
                 style={{
                   width: `${(b.spent / b.maximum) * 100}%`,
-                  backgroundColor: b.color.cssVar,
+                  backgroundColor: b.color,
                 }}
               />
             </div>

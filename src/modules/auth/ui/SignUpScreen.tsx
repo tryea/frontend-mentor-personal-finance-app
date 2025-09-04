@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useSignUp } from "@clerk/nextjs";
 import { signUpSchema, type SignUpFormData } from "../schemas/auth.schema";
 import AuthFooter from "./components/AuthFooter";
 import AuthFormField from "./components/AuthFormField";
@@ -12,8 +12,8 @@ import AuthSubmitButton from "./components/AuthSubmitButton";
 import { useToast } from "@/shared/contexts/ToastContext";
 
 export const SignUpScreen = () => {
-  const router = useRouter();
   const { showToast } = useToast();
+  const { signUp, setActive, isLoaded } = useSignUp();
   const {
     register,
     handleSubmit,
@@ -23,34 +23,30 @@ export const SignUpScreen = () => {
   });
 
   const onSubmit = async (data: SignUpFormData) => {
+    if (!isLoaded) return;
+
     try {
-      console.log("Sign up data:", data);
-      // TODO: Implement actual signup API call
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      const result = await signUp.create({
+        emailAddress: data.email,
+        password: data.password,
+        firstName: data.name.split(" ")[0] || data.name,
+        lastName: data.name.split(" ").slice(1).join(" ") || undefined,
       });
 
-      if (response.ok) {
-        // Handle successful signup
-        console.log("Sign up successful");
-        // Show success message
-        showToast(
-          "Account created successfully! Please login with your credentials.",
-          "success"
-        );
-        // Redirect to login page
-        setTimeout(() => router.push("/login"), 1000);
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        showToast("Account created successfully!", "success");
+      } else if (result.status === "missing_requirements") {
+        // Handle email verification if required
+        showToast("Please check your email to verify your account.", "info");
       } else {
-        // Handle signup error
-        console.error("Sign up failed");
-        showToast("Sign up failed. Please try again.", "error");
+        console.log("Sign up result:", result);
       }
-    } catch (error) {
-      console.error("Sign up error:", error);
+    } catch (error: any) {
+      showToast(
+        error?.errors?.[0]?.message || "Sign up failed. Please try again.",
+        "error"
+      );
     }
   };
 
@@ -89,6 +85,8 @@ export const SignUpScreen = () => {
               : undefined
           }
         />
+
+        <div id="clerk-captcha" />
 
         <AuthSubmitButton
           label={isSubmitting ? "Creating Account..." : "Create Account"}
