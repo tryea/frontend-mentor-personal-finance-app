@@ -1,49 +1,20 @@
 "use client";
+import { useSession } from "@clerk/nextjs";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
 import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
-import raw from "../../../../data.json";
-import { BudgetsHeader } from "./components/BudgetsHeader";
+import { type BudgetItem, type TransactionItem } from "../types";
 import { BudgetList } from "./components/BudgetList";
-import { useState, useEffect } from "react";
-import { useSession, useUser } from "@clerk/nextjs";
 import {
-  BudgetsAddBudgetModal,
   type AddBudgetPayload,
+  BudgetsAddBudgetModal,
 } from "./components/BudgetsAddBudgetModal";
+import { BudgetsDeleteBudgetModal } from "./components/BudgetsDeleteBudgetModal";
 import {
   BudgetsEditBudgetModal,
   type EditBudgetPayload,
 } from "./components/BudgetsEditBudgetModal";
-import { BudgetsDeleteBudgetModal } from "./components/BudgetsDeleteBudgetModal";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-
-export interface BudgetItem {
-  category_id: string;
-  categories: {
-    id: string;
-    name: string;
-  };
-  maximum_amount: number;
-  theme_id: string;
-  themes: {
-    id: string;
-    name: string;
-    hex_code: string;
-  };
-}
-
-export interface TransactionItem {
-  avatar?: string;
-  name: string;
-  category: string;
-  date: string;
-  amount: number;
-}
-
-interface DataShape {
-  budgets: BudgetItem[];
-  transactions: TransactionItem[];
-}
-const data: DataShape = raw as unknown as DataShape;
+import { BudgetsHeader } from "./components/BudgetsHeader";
 
 export const BudgetsScreen = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +22,7 @@ export const BudgetsScreen = () => {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-  const [budgets, setBudgets] = useState<BudgetItem[]>(data.budgets);
+  const [budgets, setBudgets] = useState<BudgetItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   // Clerk hooks for authentication
@@ -60,13 +31,20 @@ export const BudgetsScreen = () => {
   useEffect(() => {
     if (!session) return;
 
-    const client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-      {
-        accessToken: () => session.getToken()!,
-      }
-    );
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Missing Supabase environment variables");
+      return;
+    }
+
+    const client = createClient(supabaseUrl, supabaseKey, {
+      accessToken: async () => {
+        const token = await session.getToken();
+        return token || "";
+      },
+    });
     setSupabase(client);
   }, [session]);
 
@@ -80,11 +58,10 @@ export const BudgetsScreen = () => {
 
       setLoading(true);
 
-      const { data: budgetsData, error } = await supabase
-        .from("budgets")
-        .select(
-          "categories(id, name), category_id, maximum_amount, theme_id, themes(name, hex_code)"
-        );
+      const { data: budgetsData, error } = await supabase.rpc(
+        "get_budget_details"
+      );
+
       if (!error) setBudgets(budgetsData);
       setLoading(false);
 
@@ -129,7 +106,7 @@ export const BudgetsScreen = () => {
     setDeleteOpen(true);
   };
 
-  const handleEditSubmit = (payload: EditBudgetPayload) => {
+  const handleEditSubmit = (_payload: EditBudgetPayload) => {
     // setBudgets((prev) =>
     //   prev.map((b, idx) =>
     //     idx === editIndex
@@ -150,9 +127,16 @@ export const BudgetsScreen = () => {
     setDeleteIndex(null);
   };
 
-  const initialForEdit = editIndex !== null ? budgets[editIndex] ?? null : null;
+  const initialForEdit =
+    editIndex !== null && budgets[editIndex]
+      ? {
+          category: budgets[editIndex].category_name,
+          maximum: budgets[editIndex].maximum_amount,
+          theme: budgets[editIndex].theme_color,
+        }
+      : null;
   const categoryForDelete =
-    deleteIndex !== null ? budgets[deleteIndex]?.category ?? null : null;
+    deleteIndex !== null ? budgets[deleteIndex]?.category_name ?? null : null;
 
   return (
     <>
@@ -171,23 +155,32 @@ export const BudgetsScreen = () => {
           <>
             <BudgetsHeader
               items={budgets.map((e) => ({
-                name: e.categories.name,
-                spent: 0,
+                name: e.category_name,
+                spent: e.total_spent,
                 maximum: e.maximum_amount,
-                color: e.themes.hex_code,
+                color: e.theme_color,
               }))}
-              total={{ spent: 0, maximum: 0 }}
+              total={{
+                spent: budgets.reduce((sum, b) => sum + b.total_spent, 0),
+                maximum: budgets.reduce((sum, b) => sum + b.maximum_amount, 0),
+              }}
             />
             <BudgetList
               items={budgets.map((e) => ({
-                category: e.categories.name,
-                free: 0,
-                color: e.themes.hex_code,
-                latest: [],
+                category: e.category_name,
+                free: e.maximum_amount - e.total_spent,
+                color: e.theme_color,
+                latest: e.latest_transactions.map((t) => ({
+                  name: t.contact_name,
+                  avatar: t.contact_avatar_url,
+                  category: e.category_name,
+                  date: t.date,
+                  amount: t.amount,
+                })),
                 maximum: e.maximum_amount,
-                spent: 0,
+                spent: e.total_spent,
               }))}
-              toCurrency={(n) => n.toFixed(2)}
+              toCurrency={(n) => `$${n.toFixed(2)}`}
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}
             />
@@ -198,13 +191,13 @@ export const BudgetsScreen = () => {
         open={isOpen}
         onClose={() => setIsOpen(false)}
         onSubmit={handleSubmit}
-        existingCategories={budgets.map((b) => b.category)}
+        existingCategories={budgets.map((b) => b.category_name)}
       />
       <BudgetsEditBudgetModal
         open={editOpen}
         onClose={() => setEditOpen(false)}
         onSubmit={handleEditSubmit}
-        existingCategories={budgets.map((b) => b.category)}
+        existingCategories={budgets.map((b) => b.category_name)}
         initial={initialForEdit}
       />
       <BudgetsDeleteBudgetModal

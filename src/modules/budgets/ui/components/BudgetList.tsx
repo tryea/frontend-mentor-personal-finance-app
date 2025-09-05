@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TransactionItem } from "../BudgetsScreen";
+import { type TransactionItem } from "../../types";
 import { IconEllipsis } from "@/shared/ui/icons";
 
 type Item = {
