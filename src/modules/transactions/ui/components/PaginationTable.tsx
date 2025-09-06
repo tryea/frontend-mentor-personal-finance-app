@@ -55,17 +55,17 @@ export const PaginationTable = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-between shrink-0 min-h-0 h-[40px]">
+    <div className="flex flex-row w-full gap-3 max-w-full items-center justify-between shrink-0 min-h-0 h-[40px]">
       <button
         onClick={handlePreviousPage}
         disabled={currentPage === 1}
-        className="group transaction-table-pagination-button"
+        className="group transaction-table-pagination-button flex shrink-0 min-w-0 "
       >
         <IconCaretLeft className="w-4 h-4 text-grey-500 group-hover:text-white" />
-        Prev
+        <span className="hidden md:block">Prev</span>
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 min-w-0 w-full max-w-full items-center gap-2 overflow-x-scroll">
         {pageNumbers.map((page) => (
           <button
             key={page}
@@ -81,9 +81,9 @@ export const PaginationTable = ({
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className="transaction-table-pagination-button group"
+        className="transaction-table-pagination-button group flex shrink-0 min-w-0"
       >
-        Next
+        <span className="hidden md:block">Next</span>
         <IconCaretRight className="w-4 h-4 text-grey-500 group-hover:text-white" />
       </button>
     </div>

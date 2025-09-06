@@ -9,3 +9,18 @@ export type TransactionItem = {
   transactionDate: string;
   createdAt?: string;
 };
+
+export type TransactionItemTable = {
+  id: number;
+  categories: {
+    name: string;
+  };
+  contacts: {
+    name: string;
+    avatar: string;
+  };
+  amount: number;
+  type: TransactionType;
+  date: string;
+  recurring: boolean;
+};

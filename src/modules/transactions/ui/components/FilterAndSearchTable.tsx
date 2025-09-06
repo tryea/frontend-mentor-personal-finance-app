@@ -1,3 +1,4 @@
+import { Categories } from "@/shared/types/categories";
 import {
   IconCaretDown,
   IconFilterMobile,
@@ -5,13 +6,27 @@ import {
   IconSortMobile,
 } from "@/shared/ui/icons";
 
-export const FilterAndSearchTable = () => {
+type FilterAndSearchTableProps = {
+  sortOptions: string[];
+  onSortChange: (sortOption: string) => void;
+  categories: Categories[];
+  onChangeCategory: (categoryId: string) => void;
+  onSearchQueryChange: (query: string) => void;
+};
+export const FilterAndSearchTable = ({
+  sortOptions,
+  onSortChange,
+  categories,
+  onChangeCategory,
+  onSearchQueryChange,
+}: FilterAndSearchTableProps) => {
   return (
     <div className="flex flex-row items-center justify-between gap-6 max-w-full min-w-0 shrink-0 min-h-0 h-[50px]">
       {/* Search Box */}
       <div className="flex flex-row flex-1 min-w-0 max-w-[320px] shrink grow items-center justify-start gap-4 border border-beige-500 rounded-lg pr-5 lg:justify-between ">
         <input
           type="text"
+          onChange={(e) => onSearchQueryChange(e.target.value)}
           placeholder="Search transaction"
           className="flex flex-1 min-w-0 pl-5 pr-0 py-3 placeholder:text-beige-500 text-grey-900 outline-0 text-ellipsis"
         />
@@ -36,9 +51,13 @@ export const FilterAndSearchTable = () => {
             Sort by
           </span>
           <div className="relative">
-            <select className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13">
-              <option>Latest</option>
-              <option>Oldest</option>
+            <select
+              onChange={(e) => onSortChange(e.target.value)}
+              className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13"
+            >
+              {sortOptions.map((sortOption) => {
+                return <option key={sortOption}>{sortOption}</option>;
+              })}
             </select>
             <IconCaretDown
               width={16}
@@ -51,11 +70,18 @@ export const FilterAndSearchTable = () => {
         <div className="flex flex-1 items-center gap-2">
           <span className="text-preset-4 text-grey-900">Category</span>
           <div className="relative">
-            <select className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13">
-              <option>All Transactions</option>
-              <option>Groceries</option>
-              <option>Transport</option>
-              <option>Entertainment</option>
+            <select
+              onChange={(e) => onChangeCategory(e.target.value)}
+              className="text-preset-4 appearance-none rounded-lg border border-beige-500 bg-white py-3 pl-5 pr-13"
+            >
+              <option value="all">All Transactions</option>
+              {categories.map((category) => {
+                return (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                );
+              })}
             </select>
             <IconCaretDown
               width={16}
