@@ -1,3 +1,4 @@
+import { currencyFormatter } from "@/shared/utils/formatter";
 import React from "react";
 
 const BalanceCard = ({
@@ -19,7 +20,7 @@ const BalanceCard = ({
         data-isdark={isDark}
         className='text-preset-1 data-[isdark="true"]:text-white text-grey-900 '
       >
-        {value}
+        {currencyFormatter(value)}
       </p>
     </div>
   );

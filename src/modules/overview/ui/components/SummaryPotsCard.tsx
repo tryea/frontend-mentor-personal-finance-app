@@ -2,14 +2,11 @@ import React from "react";
 import SummaryCard from "./SummaryCard";
 import { IconPot } from "@/shared/ui/icons";
 import { redirect, RedirectType } from "next/navigation";
+import { useOverviewCtx } from "../context/OverviewProvider";
+import { currencyFormatter } from "@/shared/utils/formatter";
 
 const SummaryPotsCard = () => {
-  const potsData = [
-    { name: "Savings", amount: 159, colorVar: "var(--color-green-500)" },
-    { name: "Gift", amount: 40, colorVar: "var(--color-cyan-500)" },
-    { name: "Concert Ticket", amount: 110, colorVar: "var(--color-navy-500)" },
-    { name: "New Laptop", amount: 10, colorVar: "var(--color-yellow-500)" },
-  ];
+  const { data } = useOverviewCtx();
 
   return (
     <SummaryCard
@@ -24,27 +21,29 @@ const SummaryPotsCard = () => {
           <IconPot className="w-10 h-10 text-green-500" />
           <div className="flex flex-col gap-3">
             <p className="text-preset-4 text-grey-500">Total Saved</p>
-            <p className="text-preset-1 text-grey-900">$850</p>
+            <p className="text-preset-1 text-grey-900">
+              {currencyFormatter(data?.totalPotSaved || 0)}
+            </p>
           </div>
         </div>
         <div className="flex flex-1 min-w-0 grow">
           <div className="grid grid-cols-2 gap-4 h-[110px] w-full">
-            {potsData.map((pot, idx) => {
+            {data?.latest4Pots.map((pot) => {
               return (
                 <div
-                  key={`pot-${idx}`}
+                  key={`pot-${pot.id}`}
                   className="flex flex-1 flex-row items-center gap-4"
                 >
                   <div
                     className={`rounded-lg h-full w-1 `}
-                    style={{ backgroundColor: pot.colorVar }}
+                    style={{ backgroundColor: pot.hexCode }}
                   />
                   <div className="flex flex-col gap-2 flex-1">
                     <div className="text-preset-5 text-grey-500">
                       {pot.name}
                     </div>
                     <div className="text-preset-4-bold text-grey-900">
-                      ${pot.amount}
+                      {currencyFormatter(pot.totalAmountSaved)}
                     </div>
                   </div>
                 </div>

@@ -1,21 +1,17 @@
+import { BudgetItem } from "@/shared/types/budget";
 import React from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 type Props = {
-  items: {
-    name: string;
-    spent: number;
-    maximum: number;
-    color: string;
-  }[];
+  items: BudgetItem[];
   total: { spent: number; maximum: number };
 };
 
 const ChartDonut = ({ items, total }: Props) => {
   const data = items.map((item) => ({
     name: item.name,
-    value: item.spent,
-    color: item.color,
+    value: item.totalAmountExpenses,
+    color: item.hexCode,
   }));
 
   const chartSize = 240;
