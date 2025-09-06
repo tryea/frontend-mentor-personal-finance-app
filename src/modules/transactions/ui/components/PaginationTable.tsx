@@ -1,5 +1,5 @@
 import { IconCaretLeft, IconCaretRight } from "@/shared/ui/icons";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface PaginationTableProps {
   currentPage: number;
@@ -14,7 +14,27 @@ export const PaginationTable = ({
   totalTransactions,
   onPageChange,
 }: PaginationTableProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const [maxWidth, setMaxWidth] = useState<number>(0);
   const totalPages = Math.ceil(totalTransactions / pageSize);
+
+  useEffect(() => {
+    const updateMaxWidth = () => {
+      if (containerRef.current && prevRef.current) {
+        const width = containerRef.current.offsetWidth;
+        const actionWidth = prevRef.current.offsetWidth;
+        setMaxWidth(width - actionWidth * 2 - 36);
+      }
+    };
+
+    updateMaxWidth();
+    window.addEventListener("resize", updateMaxWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateMaxWidth);
+    };
+  }, []);
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
@@ -30,48 +50,55 @@ export const PaginationTable = ({
 
   const getPageNumbers = () => {
     const pageNumbers = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      let startPage = Math.max(1, currentPage - 2);
-      let endPage = Math.min(totalPages, currentPage + 2);
+    let widthLeft = maxWidth;
+    let maxPageSize = 1;
+    let pageNo = 1;
 
-      if (currentPage < 4) {
-        startPage = 1;
-        endPage = 5;
-      } else if (currentPage > totalPages - 3) {
-        startPage = totalPages - 4;
-        endPage = totalPages;
-      }
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
+    while (widthLeft > 80) {
+      maxPageSize++;
+      widthLeft -= 44;
     }
+
+    while (pageNo <= totalPages && pageNo < maxPageSize) {
+      pageNumbers.push(pageNo++);
+    }
+
     return pageNumbers;
   };
 
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex flex-row w-full gap-3 max-w-full items-center justify-between shrink-0 min-h-0 h-[40px]">
+    <div
+      ref={containerRef}
+      className="grid grid-cols-[auto_1fr_auto] min-w-full max-w-full gap-3 shrink-0 min-h-0 h-[40px]"
+    >
       <button
+        ref={prevRef}
         onClick={handlePreviousPage}
         disabled={currentPage === 1}
-        className="group transaction-table-pagination-button flex-none"
+        className="group transaction-table-pagination-button flex items-center justify-center gap-2 w-10 md:w-24"
       >
         <IconCaretLeft className="w-4 h-4 text-grey-500 group-hover:text-white" />
         <span className="hidden md:block">Prev</span>
       </button>
 
-      <div className="flex flex-1 flex-row min-w-0 overflow-x-auto whitespace-nowrap items-center justify-center gap-2">
+      <div className="flex flex-1 flex-row grow min-w-full min-h-0 h-full max-w-full overflow-hidden gap-2 justify-center">
+        {totalTransactions === 1 && (
+          <button
+            key={`page-halu`}
+            data-active={true}
+            className={"transaction-table-pagination-button"}
+          >
+            {1}
+          </button>
+        )}
         {pageNumbers.map((page) => (
           <button
-            key={page}
+            key={`page-${page}`}
             onClick={() => onPageChange(page)}
             data-active={currentPage === page}
-            className={"transaction-table-pagination-button"}
+            className={"transaction-table-pagination-button w-10 h-10"}
           >
             {page}
           </button>
@@ -81,7 +108,7 @@ export const PaginationTable = ({
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className="transaction-table-pagination-button group flex-none"
+        className="transaction-table-pagination-button group flex items-center justify-center gap-2 w-10 md:w-24"
       >
         <span className="hidden md:block">Next</span>
         <IconCaretRight className="w-4 h-4 text-grey-500 group-hover:text-white" />

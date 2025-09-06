@@ -16,7 +16,7 @@ export const TransactionTable = () => {
   const [transactions, setTransactions] = useState<TransactionItemTable[]>([]);
   const [categories, setCategories] = useState<Categories[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalData, setTotalData] = useState(1);
+  const [totalData, setTotalData] = useState(0);
   const [currentCategory, setCurrentCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -96,7 +96,6 @@ export const TransactionTable = () => {
       return;
     }
 
-    console.log({ transactions, count });
     setTotalData(count || 0);
     setTransactions(transactions);
   };
