@@ -29,7 +29,7 @@ const SummaryRecurringBills = () => {
         const data = await dashboardService.getOverview();
         setRecurringBills(data.recurringBills);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch recurring bills data');
+        setError(err.message || "Failed to fetch recurring bills data");
         // Fallback to mock data on error
         const mockRecurring = (dataJson.transactions as Transaction[])
           .filter((t) => t.recurring)
@@ -111,7 +111,7 @@ const SummaryRecurringBills = () => {
       }}
       className="gap-8"
     >
-      <div className="flex flex-row gap-5 flex-1 min-h-0 ">
+      <div className="flex flex-row gap-5 flex-1 min-h-0 h-full">
         <div className="grid grid-cols-1 grid-rows-3 gap-4 flex-1">
           <Row label="Paid Bills" value={toCurrency(paid)} color={"#277c78"} />
           <Row

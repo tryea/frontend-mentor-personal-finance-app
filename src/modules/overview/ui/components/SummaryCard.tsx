@@ -17,7 +17,9 @@ const SummaryCard = ({
   actionLabel = "See Details",
 }: SummaryCardProps) => {
   return (
-    <div className={`big-card bg-white rounded-xl flex flex-col ${className}`}>
+    <div
+      className={`big-card bg-white rounded-xl flex flex-col ${className} min-h-0 h-fit`}
+    >
       <div className="flex flex-row justify-between">
         <p className="text-preset-2 text-grey-900">{title}</p>
         <button

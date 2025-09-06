@@ -19,7 +19,7 @@ const SummaryTransactionCard = () => {
         const data = await dashboardService.getOverview();
         setTransactions(data.transactions);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch transactions data');
+        setError(err.message || "Failed to fetch transactions data");
         // Fallback to mock data on error
         setTransactions(dataJson.transactions as Transaction[]);
       } finally {
