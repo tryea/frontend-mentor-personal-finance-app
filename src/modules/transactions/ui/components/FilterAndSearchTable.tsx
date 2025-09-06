@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Categories } from "@/shared/types/categories";
 import {
   IconCaretDown,
@@ -20,6 +21,33 @@ export const FilterAndSearchTable = ({
   onChangeCategory,
   onSearchQueryChange,
 }: FilterAndSearchTableProps) => {
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+
+  const toggleSortMenu = () => {
+    setSortMenuOpen(!sortMenuOpen);
+    setFilterMenuOpen(false);
+  };
+
+  const toggleFilterMenu = () => {
+    setFilterMenuOpen(!filterMenuOpen);
+    setSortMenuOpen(false);
+  };
+
+  const closeMobileMenus = () => {
+    setSortMenuOpen(false);
+    setFilterMenuOpen(false);
+  };
+
+  const handleSortSelect = (sortOption: string) => {
+    onSortChange(sortOption);
+    closeMobileMenus();
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    onChangeCategory(categoryId);
+    closeMobileMenus();
+  };
   return (
     <div className="flex flex-row items-center justify-between gap-6 max-w-full min-w-0 shrink-0 min-h-0 h-[50px]">
       {/* Search Box */}
@@ -35,12 +63,56 @@ export const FilterAndSearchTable = ({
 
       {/* Mobile filter/sort icons */}
       <div className="flex items-center gap-6 md:hidden">
-        <button>
-          <IconSortMobile className="w-5 h-5" />
-        </button>
-        <button>
-          <IconFilterMobile className="w-5 h-5" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={toggleSortMenu}
+            className="p-2 rounded-lg hover:bg-grey-100"
+            aria-label="Sort options"
+          >
+            <IconSortMobile className="w-5 h-5" />
+          </button>
+          {sortMenuOpen && (
+            <div className="action-menu" onMouseLeave={closeMobileMenus}>
+              {sortOptions.map((sortOption) => (
+                <button
+                  key={sortOption}
+                  className="action-menu-item"
+                  onClick={() => handleSortSelect(sortOption)}
+                >
+                  {sortOption}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <button
+            onClick={toggleFilterMenu}
+            className="p-2 rounded-lg hover:bg-grey-100"
+            aria-label="Filter options"
+          >
+            <IconFilterMobile className="w-5 h-5" />
+          </button>
+          {filterMenuOpen && (
+            <div className="action-menu" onMouseLeave={closeMobileMenus}>
+              <button
+                className="action-menu-item"
+                onClick={() => handleCategorySelect("all")}
+              >
+                All Transactions
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  className="action-menu-item"
+                  onClick={() => handleCategorySelect(category.id.toString())}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Desktop sort/category dropdowns */}

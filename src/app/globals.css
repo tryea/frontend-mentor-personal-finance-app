@@ -307,7 +307,7 @@ body {
 }
 
 @utility action-menu {
-  @apply absolute right-0 top-full mt-2 bg-white border border-beige-500 rounded-lg shadow-md p-2 w-40 z-10;
+  @apply absolute right-0 top-full mt-6 bg-white border border-beige-500 rounded-lg shadow-md p-2 w-40 z-10 max-h-[200px] overflow-y-scroll scroll-m-3;
 }
 
 @utility action-menu-item {

@@ -16,7 +16,7 @@ export const TransactionTable = () => {
   const [transactions, setTransactions] = useState<TransactionItemTable[]>([]);
   const [categories, setCategories] = useState<Categories[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalData, setTotalData] = useState(0);
+  const [totalData, setTotalData] = useState(1);
   const [currentCategory, setCurrentCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -28,18 +28,21 @@ export const TransactionTable = () => {
 
     let sortColumn = "transaction_date";
     let sortOrder = "desc";
+    let referencedTable = undefined;
     if (sortBy === "Oldest") {
       sortOrder = "asc";
     }
 
     if (sortBy === "A to Z") {
-      sortColumn = "contact_name";
+      sortColumn = "name";
       sortOrder = "asc";
+      referencedTable = "contacts";
     }
 
     if (sortBy === "Z to A") {
-      sortColumn = "contact_name";
+      sortColumn = "name";
       sortOrder = "desc";
+      referencedTable = "contacts";
     }
 
     if (sortBy === "Highest") {
@@ -75,7 +78,10 @@ export const TransactionTable = () => {
           count: "estimated",
         }
       )
-      .order(sortColumn, { ascending: sortOrder === "asc" })
+      .order(sortColumn, {
+        ascending: sortOrder === "asc",
+        referencedTable: referencedTable,
+      })
       .filter(
         "category_id",
         currentCategory === "all" ? "gt" : "eq",
