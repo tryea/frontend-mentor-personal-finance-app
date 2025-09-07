@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DataTable } from "./DataTable";
 import { FilterAndSearchTable } from "./FilterAndSearchTable";
 import { PaginationTable } from "./PaginationTable";
