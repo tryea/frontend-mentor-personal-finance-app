@@ -1,16 +1,7 @@
 import React, { useState } from "react";
-import { PotItem } from "../../PotsScreen";
+import { PotItem } from "@/shared/types/pots";
 import { IconEllipsis } from "@/shared/ui/icons";
-
-const COLOR_MAP: Record<string, { bgClass: string; cssVar: string }> = {
-  "#277C78": { bgClass: "bg-green-500", cssVar: "var(--color-green-500)" },
-  "#626070": { bgClass: "bg-navy-500", cssVar: "var(--color-navy-500)" },
-  "#82C9D7": { bgClass: "bg-cyan-500", cssVar: "var(--color-cyan-500)" },
-  "#F2CDAC": { bgClass: "bg-yellow-500", cssVar: "var(--color-yellow-500)" },
-  "#826CB0": { bgClass: "bg-purple-500", cssVar: "var(--color-purple-500)" },
-};
-
-const toCurrency = (n: number) => `$${n.toFixed(2)}`;
+import { currencyFormatter } from "@/shared/utils/formatter";
 
 export const PotSectionCard = ({
   item,
@@ -27,18 +18,14 @@ export const PotSectionCard = ({
   onAddMoney: (index: number) => void;
   onWithdraw: (index: number) => void;
 }) => {
-  const color = COLOR_MAP[item.theme] ?? {
-    bgClass: "bg-grey-300",
-    cssVar: "var(--color-grey-300)",
-  };
-  const pct = Math.min((item.total / item.target) * 100, 100);
+  const pct = Math.min((item.totalAmountSaved / item.targetAmount) * 100, 100);
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <section className="pot-card">
       <header className="row-between">
         <div className="flex items-center gap-2">
-          <span className={`dot-2 ${color.bgClass}`} />
+          <span className={`dot-2`} style={{ backgroundColor: item.hexCode }} />
           <h3 className="text-preset-3 text-grey-900">{item.name}</h3>
         </div>
         <div className="relative">
@@ -80,7 +67,7 @@ export const PotSectionCard = ({
       <div className="row-between">
         <span className="text-preset-4 text-grey-500">Total Saved</span>
         <span className="text-preset-1 text-grey-900">
-          {toCurrency(item.total)}
+          {currencyFormatter(item.totalAmountSaved)}
         </span>
       </div>
 
@@ -88,13 +75,13 @@ export const PotSectionCard = ({
         <div className="progress-track">
           <div
             className="h-full rounded-full"
-            style={{ width: `${pct}%`, backgroundColor: color.cssVar }}
+            style={{ width: `${pct}%`, backgroundColor: item.hexCode }}
           />
         </div>
         <div className="row-between">
           <span className="text-preset-5 text-grey-500">{pct.toFixed(1)}%</span>
           <span className="text-preset-5 text-grey-500">
-            Target of {toCurrency(item.target)}
+            Target of {currencyFormatter(item.targetAmount)}
           </span>
         </div>
       </div>
