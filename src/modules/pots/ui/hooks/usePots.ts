@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSupabaseClient } from "@/shared/hooks/useSupabaseClient";
 import { PotItem } from "@/shared/types/pots";
-import { makePotsRepositorySupabase } from "../../infrastructure/OverviewRepositorySupabase";
+import { makePotsRepositorySupabase } from "../../infrastructure/PotsRepositorySupabase";
 import { makeGetPotsWithDetails } from "../../application/GetPotsWithDetails";
 
 export function usePots() {

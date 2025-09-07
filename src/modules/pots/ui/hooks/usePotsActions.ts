@@ -6,7 +6,7 @@ import { AddPotPayload } from "../components/PotsAddPotModal";
 import { EditPotPayload } from "../components/PotsEditPotModal";
 import { useSupabaseClient } from "@/shared/hooks/useSupabaseClient";
 import { useToast } from "@/shared/contexts/ToastContext";
-import { makePotsRepositorySupabase } from "../../infrastructure/OverviewRepositorySupabase";
+import { makePotsRepositorySupabase } from "../../infrastructure/PotsRepositorySupabase";
 import { makeGetPotsWithDetails } from "../../application/GetPotsWithDetails";
 
 type Theme = {
@@ -26,14 +26,14 @@ export function usePotsActions(
   // Function to refresh pots data
   const refreshPots = async () => {
     if (!supabase) return;
-    
+
     try {
       const repo = makePotsRepositorySupabase(supabase);
       const getPots = makeGetPotsWithDetails(repo);
       const updatedPots = await getPots.execute();
       setPots(() => updatedPots);
     } catch (error) {
-      console.error('Error refreshing pots:', error);
+      console.error("Error refreshing pots:", error);
     }
   };
 
@@ -107,12 +107,12 @@ export function usePotsActions(
       ]);
 
       // Show success toast
-      showToast('Pot berhasil ditambahkan!', 'success');
+      showToast("Pot berhasil ditambahkan!", "success");
 
       closeAdd();
     } catch (error) {
       console.error("Error in handleAdd:", error);
-      showToast('Gagal menambahkan pot. Silakan coba lagi.', 'error');
+      showToast("Gagal menambahkan pot. Silakan coba lagi.", "error");
     }
   };
 
@@ -128,7 +128,7 @@ export function usePotsActions(
         (theme) => theme.hexCode === payload.theme
       );
       if (!selectedTheme) {
-        showToast('Tema tidak ditemukan', 'error');
+        showToast("Tema tidak ditemukan", "error");
         return;
       }
 
@@ -143,8 +143,8 @@ export function usePotsActions(
         .eq("id", potToEdit.id);
 
       if (error) {
-        console.error('Error updating pot in database:', error);
-        showToast('Gagal memperbarui pot. Silakan coba lagi.', 'error');
+        console.error("Error updating pot in database:", error);
+        showToast("Gagal memperbarui pot. Silakan coba lagi.", "error");
         return;
       }
 
@@ -161,105 +161,131 @@ export function usePotsActions(
             : p
         )
       );
-      
-      showToast('Pot berhasil diperbarui!', 'success');
+
+      showToast("Pot berhasil diperbarui!", "success");
       closeEdit();
     } catch (error) {
-      console.error('Error in handleEdit:', error);
-      showToast('Gagal memperbarui pot. Silakan coba lagi.', 'error');
+      console.error("Error in handleEdit:", error);
+      showToast("Gagal memperbarui pot. Silakan coba lagi.", "error");
     }
   };
 
   const handleDelete = async () => {
     if (deleteIndex === null || !supabase) return;
-    
+
     const pot = pots?.[deleteIndex];
     if (!pot) return;
 
     try {
       // Delete pot from database
-      const { error } = await supabase
-        .from('pots')
-        .delete()
-        .eq('id', pot.id);
+      const { error } = await supabase.from("pots").delete().eq("id", pot.id);
 
       if (error) {
-        console.error('Error deleting pot from database:', JSON.stringify(error, null, 2));
-        showToast(`Gagal menghapus pot: ${error.message || 'Unknown error'}`, 'error');
+        console.error(
+          "Error deleting pot from database:",
+          JSON.stringify(error, null, 2)
+        );
+        showToast(
+          `Gagal menghapus pot: ${error.message || "Unknown error"}`,
+          "error"
+        );
         return;
       }
 
       // Remove from local state after successful database deletion
       setPots((prev) => prev.filter((_, idx) => idx !== deleteIndex));
-      showToast('Pot berhasil dihapus!', 'success');
+      showToast("Pot berhasil dihapus!", "success");
       closeDelete();
     } catch (error) {
-      console.error('Error deleting pot (catch):', error);
-      showToast(`Gagal menghapus pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      console.error("Error deleting pot (catch):", error);
+      showToast(
+        `Gagal menghapus pot: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        "error"
+      );
     }
   };
 
   const handleAddMoney = async (amount: number) => {
     if (addMoneyIndex === null || !supabase) return;
-    
+
     const pot = pots?.[addMoneyIndex];
     if (!pot) return;
 
     try {
       // Insert transaction to pot_transactions table
-      const { error } = await supabase
-        .from('pot_transactions')
-        .insert({
-          pot_id: pot.id,
-          type: 'ADD',
-          amount: amount
-        });
+      const { error } = await supabase.from("pot_transactions").insert({
+        pot_id: pot.id,
+        type: "ADD",
+        amount: amount,
+      });
 
       if (error) {
-        console.error('Error adding money to pot:', JSON.stringify(error, null, 2));
-        showToast(`Gagal menambahkan uang ke pot: ${error.message || 'Unknown error'}`, 'error');
+        console.error(
+          "Error adding money to pot:",
+          JSON.stringify(error, null, 2)
+        );
+        showToast(
+          `Gagal menambahkan uang ke pot: ${error.message || "Unknown error"}`,
+          "error"
+        );
         return;
       }
 
       // Refresh pots data to get updated amounts
       await refreshPots();
-      showToast('Uang berhasil ditambahkan ke pot!', 'success');
+      showToast("Uang berhasil ditambahkan ke pot!", "success");
       closeAddMoney();
     } catch (error) {
-      console.error('Error adding money to pot (catch):', error);
-      showToast(`Gagal menambahkan uang ke pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      console.error("Error adding money to pot (catch):", error);
+      showToast(
+        `Gagal menambahkan uang ke pot: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        "error"
+      );
     }
   };
 
   const handleWithdraw = async (amount: number) => {
     if (withdrawIndex === null || !supabase) return;
-    
+
     const pot = pots?.[withdrawIndex];
     if (!pot) return;
 
     try {
       // Insert transaction to pot_transactions table
-      const { error } = await supabase
-        .from('pot_transactions')
-        .insert({
-          pot_id: pot.id,
-          type: 'WITHDRAW',
-          amount: amount
-        });
+      const { error } = await supabase.from("pot_transactions").insert({
+        pot_id: pot.id,
+        type: "WITHDRAW",
+        amount: amount,
+      });
 
       if (error) {
-        console.error('Error withdrawing money from pot:', JSON.stringify(error, null, 2));
-        showToast(`Gagal menarik uang dari pot: ${error.message || 'Unknown error'}`, 'error');
+        console.error(
+          "Error withdrawing money from pot:",
+          JSON.stringify(error, null, 2)
+        );
+        showToast(
+          `Gagal menarik uang dari pot: ${error.message || "Unknown error"}`,
+          "error"
+        );
         return;
       }
 
       // Refresh pots data to get updated amounts
       await refreshPots();
-      showToast('Uang berhasil ditarik dari pot!', 'success');
+      showToast("Uang berhasil ditarik dari pot!", "success");
       closeWithdraw();
     } catch (error) {
-      console.error('Error withdrawing money from pot (catch):', error);
-      showToast(`Gagal menarik uang dari pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+      console.error("Error withdrawing money from pot (catch):", error);
+      showToast(
+        `Gagal menarik uang dari pot: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        "error"
+      );
     }
   };
 
