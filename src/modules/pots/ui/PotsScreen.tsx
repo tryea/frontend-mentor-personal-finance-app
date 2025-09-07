@@ -46,7 +46,8 @@ export const PotsScreen = () => {
         open={modals.editIndex !== null}
         onClose={actions.closeEdit}
         onSubmit={handlers.handleEdit}
-        initial={computed.editing ?? undefined}
+        initial={computed.editing}
+        themes={data.themes}
       />
       <PotsDeletePotModal
         open={modals.deleteIndex !== null}

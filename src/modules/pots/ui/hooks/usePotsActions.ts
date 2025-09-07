@@ -100,22 +100,58 @@ export function usePotsActions(
     }
   };
 
-  const handleEdit = (payload: EditPotPayload) => {
-    if (editIndex === null) return;
-    setPots((prev) =>
-      prev.map((p, idx) =>
-        idx === editIndex
-          ? {
-              ...p,
-              name: payload.name,
-              targetAmount: payload.target,
-              hexCode: payload.theme,
-            }
-          : p
-      )
-    );
-    showToast('Pot berhasil diperbarui!', 'success');
-    closeEdit();
+  const handleEdit = async (payload: EditPotPayload) => {
+    if (editIndex === null || !pots || !supabase) return;
+
+    const potToEdit = pots[editIndex];
+    if (!potToEdit) return;
+
+    try {
+      // Find theme_id from themes data
+      const selectedTheme = themes.find(
+        (theme) => theme.hexCode === payload.theme
+      );
+      if (!selectedTheme) {
+        showToast('Tema tidak ditemukan', 'error');
+        return;
+      }
+
+      // Update pot in database
+      const { error } = await supabase
+        .from("pots")
+        .update({
+          name: payload.name,
+          target_amount: payload.target,
+          theme_id: selectedTheme.id,
+        })
+        .eq("id", potToEdit.id);
+
+      if (error) {
+        console.error('Error updating pot in database:', error);
+        showToast('Gagal memperbarui pot. Silakan coba lagi.', 'error');
+        return;
+      }
+
+      // Update local state after successful database update
+      setPots((prev) =>
+        prev.map((p, idx) =>
+          idx === editIndex
+            ? {
+                ...p,
+                name: payload.name,
+                targetAmount: payload.target,
+                hexCode: payload.theme,
+              }
+            : p
+        )
+      );
+      
+      showToast('Pot berhasil diperbarui!', 'success');
+      closeEdit();
+    } catch (error) {
+      console.error('Error in handleEdit:', error);
+      showToast('Gagal memperbarui pot. Silakan coba lagi.', 'error');
+    }
   };
 
   const handleDelete = () => {

@@ -1,7 +1,7 @@
 "use client";
 import { IconCaretDown } from "@/shared/ui/icons";
 import React, { useEffect, useState } from "react";
-import type { PotItem } from "../PotsScreen";
+import type { PotItem } from "@/shared/types/pots";
 
 export type EditPotPayload = {
   name: string;
@@ -9,16 +9,24 @@ export type EditPotPayload = {
   theme: string;
 };
 
+type Theme = {
+  id: number;
+  name: string;
+  hexCode: string;
+};
+
 export const PotsEditPotModal = ({
   open,
   onClose,
   onSubmit,
   initial,
+  themes = [],
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: EditPotPayload) => void;
   initial?: PotItem | null;
+  themes?: Theme[];
 }) => {
   const [name, setName] = useState("");
   const [target, setTarget] = useState<string>("");
@@ -27,21 +35,15 @@ export const PotsEditPotModal = ({
   useEffect(() => {
     if (open && initial) {
       setName(initial.name);
-      setTarget(String(initial.target));
-      setTheme(initial.theme ?? "#277C78");
+      setTarget(String(initial.targetAmount));
+      setTheme(initial.hexCode ?? (themes[0]?.hexCode || "#277C78"));
     }
-  }, [open, initial]);
+  }, [open, initial, themes]);
 
   const NAME_LIMIT = 30;
   const remaining = Math.max(NAME_LIMIT - name.length, 0);
 
-  const themes: { name: string; value: string; dot: string }[] = [
-    { name: "Green", value: "#277C78", dot: "bg-green-500" },
-    { name: "Navy", value: "#626070", dot: "bg-navy-500" },
-    { name: "Cyan", value: "#82C9D7", dot: "bg-cyan-500" },
-    { name: "Yellow", value: "#F2CDAC", dot: "bg-yellow-500" },
-    { name: "Purple", value: "#826CB0", dot: "bg-purple-500" },
-  ];
+  // Use themes from props instead of hardcoded array
 
   const valid = name.trim().length > 0 && target !== "" && Number(target) > 0;
 
@@ -111,7 +113,7 @@ export const PotsEditPotModal = ({
                 className="input-select w-full"
               >
                 {themes.map((t) => (
-                  <option key={t.value} value={t.value}>
+                  <option key={t.hexCode} value={t.hexCode}>
                     {t.name}
                   </option>
                 ))}
@@ -124,12 +126,13 @@ export const PotsEditPotModal = ({
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`dot-2 ${
-                  themes.find((t) => t.value === theme)?.dot ?? "bg-grey-300"
-                }`}
+                className="dot-2"
+                style={{
+                  backgroundColor: theme,
+                }}
               />
               <span className="text-preset-4 text-grey-900">
-                {themes.find((t) => t.value === theme)?.name}
+                {themes.find((t) => t.hexCode === theme)?.name || 'Unknown'}
               </span>
             </div>
           </div>
