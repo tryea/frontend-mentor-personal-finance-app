@@ -1,16 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import type { PotItem } from "../PotsScreen";
-
-const COLOR_MAP: Record<string, { cssVar: string }> = {
-  "#277C78": { cssVar: "var(--color-green-500)" },
-  "#626070": { cssVar: "var(--color-navy-500)" },
-  "#82C9D7": { cssVar: "var(--color-cyan-500)" },
-  "#F2CDAC": { cssVar: "var(--color-yellow-500)" },
-  "#826CB0": { cssVar: "var(--color-purple-500)" },
-};
-
-const toCurrency = (n: number) => `$${n.toFixed(2)}`;
+import type { PotItem } from "@/shared/types/pots";
+import { currencyFormatter } from "@/shared/utils/formatter";
 
 export const PotsAddMoneyModal = ({
   open,
@@ -32,9 +23,8 @@ export const PotsAddMoneyModal = ({
 
   if (!open || !pot) return null;
 
-  const newTotal = pot.total + numericAmount;
-  const pct = Math.min((newTotal / pot.target) * 100, 100);
-  const theme = COLOR_MAP[pot.theme]?.cssVar ?? "var(--color-grey-300)";
+  const newTotal = pot.totalAmountSaved + numericAmount;
+  const pct = Math.min((newTotal / pot.targetAmount) * 100, 100);
 
   const valid = numericAmount > 0;
 
@@ -49,43 +39,66 @@ export const PotsAddMoneyModal = ({
       <div className="modal-panel">
         <header className="modal-header">
           <h2 className="text-preset-2 text-grey-900">{`Add to ‘${pot.name}’`}</h2>
-          <button aria-label="Close" onClick={onClose} className="text-grey-500">×</button>
+          <button
+            aria-label="Close"
+            onClick={onClose}
+            className="text-grey-500"
+          >
+            ×
+          </button>
         </header>
 
         <p className="text-preset-5 text-grey-500 mt-2">
-          Add money to your pot to keep it separate from your main balance. As soon as you add this money, it will be deducted from your current balance.
+          Add money to your pot to keep it separate from your main balance. As
+          soon as you add this money, it will be deducted from your current
+          balance.
         </p>
 
         <form onSubmit={submit} className="stack-6 mt-6">
           <div className="form-field">
             <div className="row-between">
               <label className="text-preset-5 text-grey-500">New Amount</label>
-              <span className="text-preset-1 text-grey-900">{toCurrency(newTotal)}</span>
+              <span className="text-preset-1 text-grey-900">
+                {currencyFormatter(newTotal)}
+              </span>
             </div>
             <div className="progress-track">
-              <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: theme }} />
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${pct}%`, backgroundColor: pot.hexCode }}
+              />
             </div>
             <div className="row-between">
-              <span className="text-preset-5 text-grey-500">{pct.toFixed(2)}%</span>
-              <span className="text-preset-5 text-grey-500">Target of {toCurrency(pot.target)}</span>
+              <span className="text-preset-5 text-grey-500">
+                {pct.toFixed(2)}%
+              </span>
+              <span className="text-preset-5 text-grey-500">
+                Target of {currencyFormatter(pot.targetAmount)}
+              </span>
             </div>
           </div>
 
           <div className="form-field">
             <label className="text-preset-5 text-grey-500">Amount to Add</label>
             <div className="relative">
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">$</span>
+              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-grey-500">
+                $
+              </span>
               <input
                 inputMode="decimal"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+                onChange={(e) =>
+                  setAmount(e.target.value.replace(/[^0-9.]/g, ""))
+                }
                 className="input-text w-full pl-7"
                 placeholder="$"
               />
             </div>
           </div>
 
-          <button disabled={!valid} className="btn-primary disabled:opacity-50">Confirm Addition</button>
+          <button disabled={!valid} className="btn-primary disabled:opacity-50">
+            Confirm Addition
+          </button>
         </form>
       </div>
     </div>

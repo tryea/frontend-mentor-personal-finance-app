@@ -6,6 +6,8 @@ import { AddPotPayload } from "../components/PotsAddPotModal";
 import { EditPotPayload } from "../components/PotsEditPotModal";
 import { useSupabaseClient } from "@/shared/hooks/useSupabaseClient";
 import { useToast } from "@/shared/contexts/ToastContext";
+import { makePotsRepositorySupabase } from "../../infrastructure/OverviewRepositorySupabase";
+import { makeGetPotsWithDetails } from "../../application/GetPotsWithDetails";
 
 type Theme = {
   id: number;
@@ -20,6 +22,20 @@ export function usePotsActions(
   const supabase = useSupabaseClient();
   const { showToast } = useToast();
   const [themes, setThemes] = useState<Theme[]>([]);
+
+  // Function to refresh pots data
+  const refreshPots = async () => {
+    if (!supabase) return;
+    
+    try {
+      const repo = makePotsRepositorySupabase(supabase);
+      const getPots = makeGetPotsWithDetails(repo);
+      const updatedPots = await getPots.execute();
+      setPots(() => updatedPots);
+    } catch (error) {
+      console.error('Error refreshing pots:', error);
+    }
+  };
 
   // Modal states
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -161,30 +177,68 @@ export function usePotsActions(
     closeDelete();
   };
 
-  const handleAddMoney = (amount: number) => {
-    if (addMoneyIndex === null) return;
-    setPots((prev) =>
-      prev.map((p, i) =>
-        i === addMoneyIndex
-          ? { ...p, totalAmountSaved: Math.max(0, p.totalAmountSaved + amount) }
-          : p
-      )
-    );
-    showToast('Uang berhasil ditambahkan ke pot!', 'success');
-    closeAddMoney();
+  const handleAddMoney = async (amount: number) => {
+    if (addMoneyIndex === null || !supabase) return;
+    
+    const pot = pots?.[addMoneyIndex];
+    if (!pot) return;
+
+    try {
+      // Insert transaction to pot_transactions table
+      const { error } = await supabase
+        .from('pot_transactions')
+        .insert({
+          pot_id: pot.id,
+          type: 'ADD',
+          amount: amount
+        });
+
+      if (error) {
+        console.error('Error adding money to pot:', JSON.stringify(error, null, 2));
+        showToast(`Gagal menambahkan uang ke pot: ${error.message || 'Unknown error'}`, 'error');
+        return;
+      }
+
+      // Refresh pots data to get updated amounts
+      await refreshPots();
+      showToast('Uang berhasil ditambahkan ke pot!', 'success');
+      closeAddMoney();
+    } catch (error) {
+      console.error('Error adding money to pot (catch):', error);
+      showToast(`Gagal menambahkan uang ke pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    }
   };
 
-  const handleWithdraw = (amount: number) => {
-    if (withdrawIndex === null) return;
-    setPots((prev) =>
-      prev.map((p, i) =>
-        i === withdrawIndex
-          ? { ...p, totalAmountSaved: Math.max(0, p.totalAmountSaved - amount) }
-          : p
-      )
-    );
-    showToast('Uang berhasil ditarik dari pot!', 'success');
-    closeWithdraw();
+  const handleWithdraw = async (amount: number) => {
+    if (withdrawIndex === null || !supabase) return;
+    
+    const pot = pots?.[withdrawIndex];
+    if (!pot) return;
+
+    try {
+      // Insert transaction to pot_transactions table
+      const { error } = await supabase
+        .from('pot_transactions')
+        .insert({
+          pot_id: pot.id,
+          type: 'WITHDRAW',
+          amount: amount
+        });
+
+      if (error) {
+        console.error('Error withdrawing money from pot:', JSON.stringify(error, null, 2));
+        showToast(`Gagal menarik uang dari pot: ${error.message || 'Unknown error'}`, 'error');
+        return;
+      }
+
+      // Refresh pots data to get updated amounts
+      await refreshPots();
+      showToast('Uang berhasil ditarik dari pot!', 'success');
+      closeWithdraw();
+    } catch (error) {
+      console.error('Error withdrawing money from pot (catch):', error);
+      showToast(`Gagal menarik uang dari pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    }
   };
 
   // Computed values for modals
