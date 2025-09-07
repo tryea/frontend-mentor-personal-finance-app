@@ -170,11 +170,33 @@ export function usePotsActions(
     }
   };
 
-  const handleDelete = () => {
-    if (deleteIndex === null) return;
-    setPots((prev) => prev.filter((_, idx) => idx !== deleteIndex));
-    showToast('Pot berhasil dihapus!', 'success');
-    closeDelete();
+  const handleDelete = async () => {
+    if (deleteIndex === null || !supabase) return;
+    
+    const pot = pots?.[deleteIndex];
+    if (!pot) return;
+
+    try {
+      // Delete pot from database
+      const { error } = await supabase
+        .from('pots')
+        .delete()
+        .eq('id', pot.id);
+
+      if (error) {
+        console.error('Error deleting pot from database:', JSON.stringify(error, null, 2));
+        showToast(`Gagal menghapus pot: ${error.message || 'Unknown error'}`, 'error');
+        return;
+      }
+
+      // Remove from local state after successful database deletion
+      setPots((prev) => prev.filter((_, idx) => idx !== deleteIndex));
+      showToast('Pot berhasil dihapus!', 'success');
+      closeDelete();
+    } catch (error) {
+      console.error('Error deleting pot (catch):', error);
+      showToast(`Gagal menghapus pot: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
+    }
   };
 
   const handleAddMoney = async (amount: number) => {
