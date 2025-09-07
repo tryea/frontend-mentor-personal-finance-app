@@ -10,10 +10,12 @@ import AuthFormField from "./components/AuthFormField";
 import AuthFormWrapper from "./components/AuthFormWrapper";
 import AuthHeader from "./components/AuthHeader";
 import AuthSubmitButton from "./components/AuthSubmitButton";
+import { useRouter } from "next/navigation";
 
 export const LoginScreen = () => {
   const { showToast } = useToast();
   const { signIn, setActive, isLoaded } = useSignIn();
+  const router = useRouter();
 
   const {
     register,
@@ -35,6 +37,7 @@ export const LoginScreen = () => {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         showToast("Login successful!", "success");
+        router.push("/");
       } else {
         // Handle other statuses if needed
         console.log("Login result:", result);
