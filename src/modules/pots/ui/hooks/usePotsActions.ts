@@ -312,7 +312,6 @@ export function usePotsActions(
         }
 
         setThemes(themesData || []);
-        console.log("Themes loaded:", themesData);
       } catch (error) {
         console.error("Error in fetchThemes:", error);
       }

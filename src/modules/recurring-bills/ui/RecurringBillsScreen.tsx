@@ -1,10 +1,14 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { LayoutHeader } from "@/shared/ui/primitives/LayoutHeader";
-import data from "../../../../data.json";
 import { RecurringBillsHeader } from "./components/RecurringBillsHeader";
 import { RecurringBillsFilter } from "./components/RecurringBillsFilter";
 import { RecurringBillList } from "./components/RecurringBillList";
+import { useSupabaseClient } from "@/shared/hooks/useSupabaseClient";
+import {
+  RecurringItemList,
+  RecurringSummary,
+} from "@/shared/types/recurringBill";
 
 export type Transaction = {
   avatar?: string;
@@ -24,95 +28,108 @@ export type BillItem = {
   nextDueDate: Date;
 };
 
-const toCurrency = (n: number) => `$${n.toFixed(2)}`;
-
-const addMonths = (date: Date, months: number) => {
-  const d = new Date(date.getTime());
-  d.setMonth(d.getMonth() + months);
-  return d;
-};
-
-const monthDiff = (a: Date, b: Date) =>
-  a.getFullYear() * 12 + a.getMonth() - (b.getFullYear() * 12 + b.getMonth());
+const SORT_BY = ["Latest", "Oldest", "A to Z", "Z to A", "Highest", "Lowest"];
 
 export const RecurringBillsScreen = () => {
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"latest" | "oldest">("latest");
+  const supabase = useSupabaseClient();
+  const [recurringSummary, setRecurringSummary] =
+    useState<RecurringSummary | null>(null);
 
-  const recurring = (data.transactions as Transaction[]).filter(
-    (t) => t.recurring
-  );
+  const [recurringList, setRecurringList] = useState<RecurringItemList[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const grouped = useMemo<BillItem[]>(() => {
-    const map = new Map<string, BillItem>();
-    for (const t of recurring) {
-      const key = t.name;
-      const amount = Math.abs(t.amount);
-      const d = new Date(t.date);
-      const existing = map.get(key);
-      if (!existing || d > existing.latestDate) {
-        map.set(key, {
-          name: t.name,
-          avatar: t.avatar,
-          category: t.category,
-          amount,
-          latestDate: d,
-          nextDueDate: addMonths(d, 1),
-        });
-      }
+  const [sortBy, setSortBy] = useState(SORT_BY[0]);
+
+  const fetchSummaryRecurringBills = async () => {
+    if (!supabase) return;
+
+    const { data, error } = await supabase
+      .from("recurring_summary")
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("Error fetching transactions:", error);
+      return;
     }
-    return Array.from(map.values());
-  }, [recurring]);
 
-  const totals = useMemo(() => {
-    const now = new Date();
-    const total = grouped.reduce((acc, it) => acc + it.amount, 0);
-    const paid = grouped
-      .filter((it) => monthDiff(now, it.latestDate) === 0)
-      .reduce((acc, it) => acc + it.amount, 0);
-    const upcoming = grouped
-      .filter(
-        (it) => it.nextDueDate > now && monthDiff(it.nextDueDate, now) === 0
-      )
-      .reduce((acc, it) => acc + it.amount, 0);
-    const dueSoon = grouped
-      .filter((it) => {
-        const diff =
-          (it.nextDueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-        return diff >= 0 && diff <= 7;
+    setRecurringSummary(data);
+  };
+
+  const fetchRecurringBills = async () => {
+    if (!supabase) return;
+
+    let sortColumn = "dueDate";
+    let sortOrder = "asc";
+
+    if (sortBy === "Oldest") {
+      sortOrder = "asc";
+    }
+
+    if (sortBy === "A to Z") {
+      sortColumn = "contactName";
+      sortOrder = "asc";
+    }
+
+    if (sortBy === "Z to A") {
+      sortColumn = "contactName";
+      sortOrder = "desc";
+    }
+
+    if (sortBy === "Highest") {
+      sortColumn = "amount";
+      sortOrder = "desc";
+    }
+
+    if (sortBy === "Lowest") {
+      sortColumn = "amount";
+      sortOrder = "asc";
+    }
+
+    const { data, error } = await supabase
+      .from("recurring_bills")
+      .select("*")
+      .order(sortColumn, {
+        ascending: sortOrder === "asc",
       })
-      .reduce((acc, it) => acc + it.amount, 0);
-    return { total, paid, upcoming, dueSoon };
-  }, [grouped]);
+      .filter("contactName", "ilike", `%${searchQuery}%`);
 
-  const filteredSorted = useMemo(() => {
-    const list = grouped.filter((it) =>
-      it.name.toLowerCase().includes(search.toLowerCase())
-    );
-    return list.sort((a, b) =>
-      sortBy === "latest"
-        ? b.latestDate.getTime() - a.latestDate.getTime()
-        : a.latestDate.getTime() - b.latestDate.getTime()
-    );
-  }, [grouped, search, sortBy]);
+    if (error) {
+      console.error("Error fetching transactions:", error);
+      return;
+    }
+
+    setRecurringList(data);
+  };
+
+  const handleSortChange = (sortOption: string) => {
+    setSortBy(sortOption);
+  };
+
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    fetchSummaryRecurringBills();
+    fetchRecurringBills();
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchRecurringBills();
+  }, [sortBy, searchQuery]);
 
   return (
     <>
       <LayoutHeader title="Recurring Bills" actionName="Add New Bill" />
       <div className="stack-6">
-        <RecurringBillsHeader
-          total={totals.total}
-          paid={totals.paid}
-          upcoming={totals.upcoming}
-          dueSoon={totals.dueSoon}
-        />
+        <RecurringBillsHeader summary={recurringSummary} />
         <RecurringBillsFilter
-          search={search}
-          sortBy={sortBy}
-          onSearch={setSearch}
-          onSort={setSortBy}
+          sortOptions={SORT_BY}
+          onSortChange={handleSortChange}
+          onSearchQueryChange={handleSearchQueryChange}
         />
-        <RecurringBillList items={filteredSorted} toCurrency={toCurrency} />
+        <RecurringBillList items={recurringList} />
       </div>
     </>
   );
